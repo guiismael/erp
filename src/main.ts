@@ -1,4 +1,5 @@
 import { BankDAODatabase } from '@BankDAO.ts'
+import { GetBankList } from '@GetBankList.ts'
 import { UpdateBank } from '@UpdateBank.ts'
 import cors from 'cors'
 import express, { Request, Response } from 'express'
@@ -10,13 +11,8 @@ app.use(cors())
 const bankDao = new BankDAODatabase()
 
 app.get('/banks', async (request: Request, response: Response) => {
-  const rows = await bankDao.list()
-  const output = rows.map((row) => ({
-    id: row.bank_id,
-    code: row.code,
-    name: row.name,
-    url: row.url,
-  }))
+  const usecase = new GetBankList(bankDao)
+  const output = await usecase.execute()
   response.status(200).json(output)
 })
 
