@@ -1,7 +1,8 @@
-import { getById, update } from '@database.ts'
+import { BankDAO } from '@BankDAO.ts'
 
 export const alterBank = async (input: any) => {
-  const row = await getById(Number(input.id))
+  const bankDao = new BankDAO()
+  const row = await bankDao.getById(Number(input.id))
   const output = {
     id: row.bank_id,
     code: row.code,
@@ -12,6 +13,6 @@ export const alterBank = async (input: any) => {
     ...output,
     ...input,
   }
-  await update(bankUpdated)
+  await bankDao.update(bankUpdated)
   return bankUpdated
 }
