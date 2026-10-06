@@ -1,18 +1,23 @@
 import { BankDAO } from '@BankDAO.ts'
 
 export class BankDAOFake implements BankDAO {
-  private bankList: any[]
+  private bankList: BankDAO.BankDTO[]
   constructor() {
     this.bankList = []
   }
 
-  async save(dto: any): Promise<number> {
+  async save(dto: BankDAO.SaveDTO): Promise<number> {
     const newId = this.bankList.length + 1
-    this.bankList.push({ bank_id: newId, ...dto })
+    this.bankList.push({
+      bank_id: newId,
+      code: dto.code,
+      name: dto.name,
+      url: dto.url,
+    })
     return newId
   }
 
-  async list(): Promise<any[]> {
+  async list(): Promise<BankDAO.BankDTO[]> {
     return this.bankList
   }
 
@@ -22,11 +27,11 @@ export class BankDAOFake implements BankDAO {
     )
   }
 
-  async getById(bankId: number): Promise<any> {
+  async getById(bankId: number): Promise<BankDAO.BankDTO | undefined> {
     return this.bankList.find((bankData) => bankData.bank_id === bankId)
   }
 
-  async update(dto: any): Promise<void> {
+  async update(dto: BankDAO.UpdateDTO): Promise<void> {
     this.bankList = this.bankList.map((bankData) => {
       if (bankData.bank_id === dto.id) {
         return {
