@@ -11,7 +11,7 @@ beforeAll(() => {
   sut = new GetBankList(bankDao)
 })
 
-test('should be able to return a bank list (GET /banks)', async () => {
+test('should be able to return a bank list', async () => {
   const inputCreate = {
     code: '559',
     name: `Test List`,
