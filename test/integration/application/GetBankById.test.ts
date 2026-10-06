@@ -22,9 +22,9 @@ test('should be able to get a bank by id', async () => {
     id: bankId,
   }
   const output = await sut.execute(inputSut)
-  expect(output.id).toBe(bankId)
-  expect(output.code).toBe(inputCreate.code)
-  expect(output.name).toBe(inputCreate.name)
-  expect(output.url).toBe(inputCreate.url)
+  expect(output?.id).toBe(bankId)
+  expect(output?.code).toBe(inputCreate.code)
+  expect(output?.name).toBe(inputCreate.name)
+  expect(output?.url).toBe(inputCreate.url)
   await bankDao.remove(bankId)
 })
