@@ -29,9 +29,9 @@ test('should be able to create a bank', async () => {
     id: outputCreate.id,
   }
   const outputGet = await getBankByIdUseCase.execute(inputGet)
-  expect(outputGet.id).toBe(outputCreate.id)
-  expect(outputGet.code).toBe(inputSut.code)
-  expect(outputGet.name).toBe(inputSut.name)
-  expect(outputGet.url).toBe(inputSut.url)
+  expect(outputGet?.id).toBe(outputCreate.id)
+  expect(outputGet?.code).toBe(inputSut.code)
+  expect(outputGet?.name).toBe(inputSut.name)
+  expect(outputGet?.url).toBe(inputSut.url)
   await bankDao.remove(outputCreate.id)
 })
