@@ -8,6 +8,9 @@ export class CreateBank implements UseCase<
   constructor(private bankDao: BankDAO) {}
 
   async execute(input: CreateBank.Input): Promise<CreateBank.Output> {
+    if (!input.name || !input.name.match(/^.+\s.+$/)) {
+      throw new Error('Invalid name.')
+    }
     const bankId = await this.bankDao.save(input)
     const output = {
       id: bankId,

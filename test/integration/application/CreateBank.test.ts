@@ -35,3 +35,15 @@ test('should be able to create a bank', async () => {
   expect(outputGet?.url).toBe(inputSut.url)
   await bankDao.remove(outputCreate.id)
 })
+
+test.each(['', undefined, null, 'Test'])(
+  'should not be able to create a bank with invalid name %s',
+  async (rawName: any) => {
+    const inputCreate = {
+      code: '555',
+      name: rawName,
+      url: 'test-invalid.com',
+    }
+    await expect(sut.execute(inputCreate)).rejects.toThrow('Invalid name.')
+  },
+)

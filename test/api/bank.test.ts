@@ -46,7 +46,7 @@ test('should be able to return a bank (GET /banks/:id)', async () => {
   await axios.delete(`${baseUrl}/banks/${bankId}`)
 })
 
-test('should be able to create a bank (POST /banks', async () => {
+test('should be able to create a bank (POST /banks)', async () => {
   const inputCreate = {
     code: '345',
     name: `Test Name`,
@@ -68,7 +68,22 @@ test('should be able to create a bank (POST /banks', async () => {
   await axios.delete(`${baseUrl}/banks/${outputCreate.id}`)
 })
 
-test('should be able to alter a bank (PUT /banks', async () => {
+test.each([''])(
+  'should not be able to create a bank with invalid name %s (POST /banks)',
+  async (rawName: any) => {
+    const inputCreate = {
+      code: '555',
+      name: rawName,
+      url: 'test-invalid.com',
+    }
+    const responseCreate = await axios.post(`${baseUrl}/banks`, inputCreate)
+    expect(responseCreate.status).toBe(422)
+    const outputCreate = responseCreate.data
+    expect(outputCreate.message).toBe('Invalid name.')
+  },
+)
+
+test('should be able to alter a bank (PUT /banks/:id)', async () => {
   const inputCreate = {
     code: '456',
     name: `Test Name`,
@@ -101,7 +116,34 @@ test('should be able to alter a bank (PUT /banks', async () => {
   await axios.delete(`${baseUrl}/banks/${outputCreate.id}`)
 })
 
-test('should be able to delete a bank (DELETE /banks', async () => {
+test.each(['Test'])(
+  'should not be able to alter a bank with invalid name %s (PUT /banks/:id)',
+  async (rawName: any) => {
+    const inputCreate = {
+      code: '553',
+      name: `Test Name`,
+      url: 'teste4.com',
+    }
+    const responseCreate = await axios.post(`${baseUrl}/banks`, inputCreate)
+    const outputCreate = responseCreate.data
+    const bankId = outputCreate.id
+    const inputUpdate = {
+      code: '553',
+      name: rawName,
+      url: 'teste4.changed.com',
+    }
+    const responseUpdate = await axios.put(
+      `${baseUrl}/banks/${bankId}`,
+      inputUpdate,
+    )
+    expect(responseUpdate.status).toBe(422)
+    const outputUpdate = responseUpdate.data
+    expect(outputUpdate.message).toBe('Invalid name.')
+    await axios.delete(`${baseUrl}/banks/${outputCreate.id}`)
+  },
+)
+
+test('should be able to delete a bank (DELETE /banks/:id)', async () => {
   const inputCreate = {
     code: '567',
     name: `Test Name Delete`,
