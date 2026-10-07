@@ -74,3 +74,22 @@ test('should not be able to create a bank with already used code', async () => {
   )
   await bankDao.remove(id)
 })
+
+test('should not be able to create a bank with already used name', async () => {
+  const fakeName = `Name ${Math.random()}`
+  const firtInput = {
+    code: '123',
+    name: fakeName,
+    url: 'teste.com',
+  }
+  const { id } = await sut.execute(firtInput)
+  const secondInput = {
+    code: '321',
+    name: fakeName,
+    url: firtInput.url,
+  }
+  await expect(sut.execute(secondInput)).rejects.toThrow(
+    'A bank with this name already exists.',
+  )
+  await bankDao.remove(id)
+})

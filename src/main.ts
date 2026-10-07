@@ -16,7 +16,7 @@ const bankDao = new BankDAODatabase()
 app.get('/banks', async (request: Request, response: Response) => {
   const usecase = new GetBankList(bankDao)
   const output = await usecase.execute()
-  response.status(200).json(output)
+  return response.status(200).json(output)
 })
 
 app.get('/banks/:id', async (request: Request, response: Response) => {
@@ -29,7 +29,7 @@ app.get('/banks/:id', async (request: Request, response: Response) => {
   if (!output) {
     return response.status(404).end()
   }
-  response.status(200).json(output)
+  return response.status(200).json(output)
 })
 
 app.post('/banks', async (request: Request, response: Response) => {
@@ -37,7 +37,7 @@ app.post('/banks', async (request: Request, response: Response) => {
   const usecase = new CreateBank(bankDao)
   try {
     const output = await usecase.execute(input)
-    response.status(201).json(output)
+    return response.status(201).json(output)
   } catch (error: any) {
     return response.status(422).json({
       message: error?.message,
@@ -55,7 +55,7 @@ app.put('/banks/:id', async (request: Request, response: Response) => {
   }
   try {
     const output = await usecase.execute(input)
-    response.status(200).json(output)
+    return response.status(200).json(output)
   } catch (error: any) {
     if (error?.message === 'Bank not found.') {
       return response.status(404).json({
@@ -74,8 +74,14 @@ app.delete('/banks/:id', async (request: Request, response: Response) => {
   const input = {
     id: bankId,
   }
-  await usecase.execute(input)
-  response.status(200).end()
+  try {
+    await usecase.execute(input)
+    return response.status(200).end()
+  } catch (error: any) {
+    return response.status(422).json({
+      message: error?.message ?? '',
+    })
+  }
 })
 
 app.listen(3000, () => {

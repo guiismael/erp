@@ -21,6 +21,9 @@ export class CreateBank implements UseCase<
     const alreadyExistsWithCode = await this.bankDao.getByCode(input.code)
     if (alreadyExistsWithCode)
       throw new Error('A bank with this code already exists.')
+    const alreadyExistsWithName = await this.bankDao.getByName(input.name)
+    if (alreadyExistsWithName)
+      throw new Error('A bank with this name already exists.')
     const bankId = await this.bankDao.save(input)
     const output = {
       id: bankId,

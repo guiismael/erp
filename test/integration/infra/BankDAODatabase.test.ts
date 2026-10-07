@@ -40,7 +40,7 @@ test('should be able to test bank access', async () => {
   expect(bankData).toBeFalsy()
 })
 
-test('Deve retornar um banco pelo código', async () => {
+test('should be able to return a bank by code', async () => {
   const fakeCode = `${Math.random()}`.substring(2, 5)
   await connection.query(`DELETE FROM banks WHERE code = ? `, [fakeCode])
   const bankId = await bankDao.save({
@@ -57,6 +57,22 @@ test('Deve retornar um banco pelo código', async () => {
   await bankDao.remove(bankId)
 })
 
-test('should be able to thrown an error if bank id isnt a number ', async () => {
+test('should be able to return a bank by name', async () => {
+  const fakeName = `Name ${Math.random()}`
+  const bankId = await bankDao.save({
+    code: 'AAA',
+    name: fakeName,
+    url: 'url',
+  })
+  const savedBank = await bankDao.getByName(fakeName)
+  expect(savedBank).toBeTruthy()
+  expect(savedBank!.bank_id).toBe(bankId)
+  expect(savedBank!.code).toBe('AAA')
+  expect(savedBank!.name).toBe(fakeName)
+  expect(savedBank!.url).toBe('url')
+  await bankDao.remove(bankId)
+})
+
+test('should be able to thrown an error if bank id isnt a number on bank remove', async () => {
   await expect(bankDao.remove('asd' as any)).rejects.toThrow('Invalid bank id.')
 })

@@ -6,6 +6,7 @@ export interface BankDAO {
   remove(bankId: number): Promise<void>
   getById(bankId: number): Promise<BankDAO.BankDTO | undefined>
   getByCode(code: string): Promise<BankDAO.BankDTO | undefined>
+  getByName(string: string): Promise<BankDAO.BankDTO | undefined>
   update(dto: BankDAO.UpdateDTO): Promise<void>
 }
 
@@ -86,6 +87,19 @@ export class BankDAODatabase implements BankDAO {
     const [rows] = await connection.query<any[]>(
       `SELECT * FROM banks WHERE code = ? LIMIT 1`,
       [code],
+    )
+    const [firstRow] = rows
+    connection.pool.end()
+    return firstRow
+  }
+
+  async getByName(name: string): Promise<BankDAO.BankDTO | undefined> {
+    const connection = mysqlConnection.createPool(
+      String(process.env.DATABASE_URL),
+    )
+    const [rows] = await connection.query<any[]>(
+      `SELECT * FROM banks WHERE name = ? LIMIT 1`,
+      [name],
     )
     const [firstRow] = rows
     connection.pool.end()
