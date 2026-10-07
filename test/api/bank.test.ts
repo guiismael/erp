@@ -185,6 +185,22 @@ test.each(['Test'])(
   },
 )
 
+test('should not be able to update an inexistent bank (PUT /banks/:id)', async () => {
+  const bankId = 9_999_999
+  const inputUpdate = {
+    code: '999',
+    name: 'Inexistent Bank',
+    url: 'update.inexistent.com',
+  }
+  const responseUpdate = await axios.put(
+    `${baseUrl}/banks/${bankId}`,
+    inputUpdate,
+  )
+  expect(responseUpdate.status).toBe(404)
+  const outputUpdate = responseUpdate.data
+  expect(outputUpdate.message).toBe('Bank not found.')
+})
+
 test('should be able to delete a bank (DELETE /banks/:id)', async () => {
   const inputCreate = {
     code: '567',
