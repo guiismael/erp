@@ -11,6 +11,13 @@ export class UpdateBank implements UseCase<
     if (!input.name || !input.name.match(/^.+\s.+$/)) {
       throw new Error('Invalid name.')
     }
+    if (
+      !input.code ||
+      input.code.length !== 3 ||
+      input.code.replace(/\D/g, '').length !== 3
+    ) {
+      throw new Error('Invalid code.')
+    }
     const row = await this.bankDao.getById(input.id)
     const output = {
       id: row?.bank_id,

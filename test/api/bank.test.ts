@@ -135,17 +135,17 @@ test.each(['Test'])(
   'should not be able to alter a bank with invalid name %s (PUT /banks/:id)',
   async (invalidName: any) => {
     const inputCreate = {
-      code: '553',
-      name: `Test Name`,
+      code: '123',
+      name: 'Test Name',
       url: 'teste4.com',
     }
     const responseCreate = await axios.post(`${baseUrl}/banks`, inputCreate)
     const outputCreate = responseCreate.data
     const bankId = outputCreate.id
     const inputUpdate = {
-      code: '553',
+      code: '123',
       name: invalidName,
-      url: 'teste4.changed.com',
+      url: 'teste.changed.com',
     }
     const responseUpdate = await axios.put(
       `${baseUrl}/banks/${bankId}`,
@@ -154,6 +154,33 @@ test.each(['Test'])(
     expect(responseUpdate.status).toBe(422)
     const outputUpdate = responseUpdate.data
     expect(outputUpdate.message).toBe('Invalid name.')
+    await axios.delete(`${baseUrl}/banks/${outputCreate.id}`)
+  },
+)
+
+test.each(['Test'])(
+  'should not be able to alter a bank with invalid code %s (PUT /banks/:id)',
+  async (invalidCode: any) => {
+    const inputCreate = {
+      code: '123',
+      name: 'Test Code',
+      url: 'teste.com',
+    }
+    const responseCreate = await axios.post(`${baseUrl}/banks`, inputCreate)
+    const outputCreate = responseCreate.data
+    const bankId = outputCreate.id
+    const inputUpdate = {
+      code: invalidCode,
+      name: 'Test Code',
+      url: 'teste.changed.com',
+    }
+    const responseUpdate = await axios.put(
+      `${baseUrl}/banks/${bankId}`,
+      inputUpdate,
+    )
+    expect(responseUpdate.status).toBe(422)
+    const outputUpdate = responseUpdate.data
+    expect(outputUpdate.message).toBe('Invalid code.')
     await axios.delete(`${baseUrl}/banks/${outputCreate.id}`)
   },
 )
