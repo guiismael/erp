@@ -8,15 +8,16 @@ let bankDao: BankDAO
 let getBankByIdUseCase: GetBankById
 let sut: CreateBank
 
-beforeAll(() => {
+beforeEach(() => {
   bankDao = new BankDAOFake()
   getBankByIdUseCase = new GetBankById(bankDao)
   sut = new CreateBank(bankDao)
 })
 
 test('should be able to create a bank', async () => {
+  const fakeCode = `${Math.random()}`.substring(2, 5)
   const inputSut = {
-    code: '555',
+    code: fakeCode,
     name: `Test Name`,
     url: 'test-create.com',
   }
@@ -59,3 +60,17 @@ test.each(['', undefined, null, 'Test', '1', '01', 'ABC'])(
     await expect(sut.execute(inputCreate)).rejects.toThrow('Invalid code.')
   },
 )
+
+test('should not be able to create a bank with already used code', async () => {
+  const fakeCode = `${Math.random()}`.substring(2, 5)
+  const inputCreate = {
+    code: fakeCode,
+    name: 'Test Name',
+    url: 'teste.com',
+  }
+  const { id } = await sut.execute(inputCreate)
+  await expect(sut.execute(inputCreate)).rejects.toThrow(
+    'A bank with this code already exists.',
+  )
+  await bankDao.remove(id)
+})

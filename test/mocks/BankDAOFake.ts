@@ -31,6 +31,10 @@ export class BankDAOFake implements BankDAO {
     return this.bankList.find((bankData) => bankData.bank_id === bankId)
   }
 
+  async getByCode(code: string): Promise<BankDAO.BankDTO | undefined> {
+    return this.bankList.find((bankData) => bankData.code === code)
+  }
+
   async update(dto: BankDAO.UpdateDTO): Promise<void> {
     this.bankList = this.bankList.map((bankData) => {
       if (bankData.bank_id === dto.id) {

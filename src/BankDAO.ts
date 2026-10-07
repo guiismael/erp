@@ -5,6 +5,7 @@ export interface BankDAO {
   list(): Promise<BankDAO.BankDTO[]>
   remove(bankId: number): Promise<void>
   getById(bankId: number): Promise<BankDAO.BankDTO | undefined>
+  getByCode(code: string): Promise<BankDAO.BankDTO | undefined>
   update(dto: BankDAO.UpdateDTO): Promise<void>
 }
 
@@ -54,6 +55,7 @@ export class BankDAODatabase implements BankDAO {
   }
 
   async remove(bankId: number) {
+    if (isNaN(bankId)) throw new Error('Invalid bank id.')
     const connection = mysqlConnection.createPool(
       String(process.env.DATABASE_URL),
     )
@@ -71,6 +73,19 @@ export class BankDAODatabase implements BankDAO {
     const [rows] = await connection.query<any[]>(
       `SELECT * FROM banks WHERE bank_id = ? LIMIT 1`,
       [bankId],
+    )
+    const [firstRow] = rows
+    connection.pool.end()
+    return firstRow
+  }
+
+  async getByCode(code: string): Promise<BankDAO.BankDTO | undefined> {
+    const connection = mysqlConnection.createPool(
+      String(process.env.DATABASE_URL),
+    )
+    const [rows] = await connection.query<any[]>(
+      `SELECT * FROM banks WHERE code = ? LIMIT 1`,
+      [code],
     )
     const [firstRow] = rows
     connection.pool.end()
