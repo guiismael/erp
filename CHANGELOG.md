@@ -1,3 +1,10 @@
+## [0.3.0](https://github.com/guiismael/erp/compare/v0.2.0...v0.3.0) (2026-10-07)
+
+
+### Features
+
+* **banks:** ensure that a bank can not created with duplicated code ([41ad63f](https://github.com/guiismael/erp/commit/41ad63f95ec39918f1451a307a9388d8104e83c1))
+
 ## [0.2.0](https://github.com/guiismael/erp/compare/v0.1.7...v0.2.0) (2026-10-07)
 
 
@@ -14,6 +21,4 @@
 ## [0.1.6](https://github.com/guiismael/erp/compare/v0.1.5...v0.1.6) (2026-10-06)
 
 ## [0.1.5](https://github.com/guiismael/erp/compare/v0.1.4...v0.1.5) (2026-10-06)
-
-## [0.1.4](https://github.com/guiismael/erp/compare/v0.1.3...v0.1.4) (2026-10-06)
 
