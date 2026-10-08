@@ -94,7 +94,7 @@ test('should be able to create a bank (POST /banks)', async () => {
 })
 
 test.each([''])(
-  'should not be able to create a bank with invalid name %s (POST /banks)',
+  "should not be able to create a bank with invalid name '%s' (POST /banks)",
   async (invalidName: any) => {
     const inputCreate = {
       code: '555',
@@ -109,7 +109,7 @@ test.each([''])(
 )
 
 test.each(['ABC'])(
-  'should not be able to create a bank with invalid code %s (POST /banks)',
+  "should not be able to create a bank with invalid code '%s' (POST /banks)",
   async (invalidCode: any) => {
     const inputCreate = {
       code: invalidCode,
@@ -169,13 +169,27 @@ test('should be able to alter a bank (PUT /banks/:id)', async () => {
 })
 
 test.each(['Test'])(
-  'should not be able to alter a bank with invalid name %s (PUT /banks/:id)',
+  "should not be able to alter a bank with invalid name '%s' (PUT /banks/:id)",
   async (invalidName: any) => {
-    const bankId = 9_999_999
+    const fakeCode = `${Math.random()}`.substring(2, 5)
+    const fakeName = `Name ${Math.random()}`
+    await connection.query(`DELETE FROM banks WHERE code = ? OR name = ?`, [
+      fakeCode,
+      fakeName,
+    ])
+    const inputCreate = {
+      code: fakeCode,
+      name: fakeName,
+      url: 'teste.put.com',
+    }
+    const responseCreate = await axios.post(`${baseUrl}/banks`, inputCreate)
+    const outputCreate = responseCreate.data
+    const bankId = outputCreate.id
+    const fakeCodeToUpdate = `${Math.random()}`.substring(2, 5)
     const inputUpdate = {
-      code: '123',
+      code: fakeCodeToUpdate,
       name: invalidName,
-      url: 'teste.changed.com',
+      url: 'teste.updated.com',
     }
     const responseUpdate = await axios.put(
       `${baseUrl}/banks/${bankId}`,
@@ -184,16 +198,17 @@ test.each(['Test'])(
     expect(responseUpdate.status).toBe(422)
     const outputUpdate = responseUpdate.data
     expect(outputUpdate.message).toBe('Invalid name.')
+    await axios.delete(`${baseUrl}/banks/${outputCreate.id}`)
   },
 )
 
 test.each(['Test'])(
-  'should not be able to alter a bank with invalid code %s (PUT /banks/:id)',
+  "should not be able to alter a bank with invalid code '%s' (PUT /banks/:id)",
   async (invalidCode: any) => {
     const fakeCode = `${Math.random()}`.substring(2, 5)
     const inputCreate = {
       code: fakeCode,
-      name: 'Test Code',
+      name: `Test Code ${Math.random()}`,
       url: 'teste.com',
     }
     const responseCreate = await axios.post(`${baseUrl}/banks`, inputCreate)
@@ -201,7 +216,7 @@ test.each(['Test'])(
     const bankId = outputCreate.id
     const inputUpdate = {
       code: invalidCode,
-      name: 'Test Code',
+      name: `Test Code ${Math.random()}`,
       url: 'teste.changed.com',
     }
     const responseUpdate = await axios.put(
