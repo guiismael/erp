@@ -87,3 +87,30 @@ test('should not be able to update an inexistent bank', async () => {
   }
   await expect(sut.execute(inputUpdate)).rejects.toThrow('Bank not found.')
 })
+
+test('should not be able to update a bank with code used by other bank', async () => {
+  const firstInputCreate = {
+    code: '553',
+    name: `Test Name`,
+    url: 'teste4.com',
+  }
+  const firstBankId = await bankDao.save(firstInputCreate)
+  const secondInputCreate = {
+    code: '554',
+    name: `Test Name`,
+    url: 'teste4.com',
+  }
+  const secondBankId = await bankDao.save(secondInputCreate)
+  const inputUpdate = {
+    id: firstBankId,
+    code: '554',
+    name: 'Test Name Changed',
+    url: 'teste4.changed.com',
+  }
+  await expect(sut.execute(inputUpdate)).rejects.toThrow(
+    'Code already registered by other bank',
+  )
+
+  await bankDao.remove(firstBankId)
+  await bankDao.remove(secondBankId)
+})

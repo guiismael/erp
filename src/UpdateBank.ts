@@ -20,6 +20,12 @@ export class UpdateBank implements UseCase<
     }
     const row = await this.bankDao.getById(input.id)
     if (!row) throw new Error('Bank not found.')
+    if (row.code !== input.code) {
+      const alreadyExistsWithCode = await this.bankDao.getByCode(input.code)
+      if (alreadyExistsWithCode) {
+        throw new Error('Code already registered by other bank.')
+      }
+    }
     const output = {
       id: row?.bank_id,
       code: row?.code,

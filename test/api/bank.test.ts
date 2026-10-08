@@ -138,9 +138,15 @@ test('should be able to alter a bank (PUT /banks/:id)', async () => {
   const responseCreate = await axios.post(`${baseUrl}/banks`, inputCreate)
   const outputCreate = responseCreate.data
   const bankId = outputCreate.id
+  const fakeCodeUpdated = `${Math.random()}`.substring(2, 5)
+  const fakeNameUpdated = `Name ${Math.random()} changed`
+  await connection.query(`DELETE FROM banks WHERE code = ? OR name = ?`, [
+    fakeCodeUpdated,
+    fakeNameUpdated,
+  ])
   const inputUpdate = {
-    code: '456',
-    name: 'Test Name Changed',
+    code: fakeCodeUpdated,
+    name: fakeNameUpdated,
     url: 'teste4.changed.com',
   }
   const responseUpdate = await axios.put(
