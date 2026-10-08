@@ -91,13 +91,13 @@ test('should not be able to update an inexistent bank', async () => {
 test('should not be able to update a bank with code used by other bank', async () => {
   const firstInputCreate = {
     code: '553',
-    name: `Test Name`,
+    name: 'Test Name',
     url: 'teste4.com',
   }
   const firstBankId = await bankDao.save(firstInputCreate)
   const secondInputCreate = {
     code: '554',
-    name: `Test Name`,
+    name: 'Test Name',
     url: 'teste4.com',
   }
   const secondBankId = await bankDao.save(secondInputCreate)
@@ -109,6 +109,33 @@ test('should not be able to update a bank with code used by other bank', async (
   }
   await expect(sut.execute(inputUpdate)).rejects.toThrow(
     'Code already registered by other bank',
+  )
+
+  await bankDao.remove(firstBankId)
+  await bankDao.remove(secondBankId)
+})
+
+test('should not be able to update a bank with name used by other bank', async () => {
+  const firstInputCreate = {
+    code: '553',
+    name: 'Test Name',
+    url: 'teste.com',
+  }
+  const firstBankId = await bankDao.save(firstInputCreate)
+  const secondInputCreate = {
+    code: '553',
+    name: 'Test Name Changed',
+    url: 'teste.com',
+  }
+  const secondBankId = await bankDao.save(secondInputCreate)
+  const inputUpdate = {
+    id: firstBankId,
+    code: firstInputCreate.code,
+    name: secondInputCreate.name,
+    url: 'teste.changed.com',
+  }
+  await expect(sut.execute(inputUpdate)).rejects.toThrow(
+    'Name already registered by other bank',
   )
 
   await bankDao.remove(firstBankId)

@@ -26,6 +26,11 @@ export class UpdateBank implements UseCase<
         throw new Error('Code already registered by other bank.')
       }
     }
+    if (row.name !== input.name) {
+      const alreadyExistsWithCode = await this.bankDao.getByName(input.name)
+      if (alreadyExistsWithCode)
+        throw new Error('Name already registered by other bank')
+    }
     const output = {
       id: row?.bank_id,
       code: row?.code,
