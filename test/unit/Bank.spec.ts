@@ -12,6 +12,7 @@ test('should be able to create a bank', () => {
   expect(instance.getCode()).toBe('123')
   expect(instance.getUrl()).toBe('url.com')
 })
+
 test('should be able to restore a bank', () => {
   const instance = Bank.restore({
     bankId: 1,
@@ -25,6 +26,7 @@ test('should be able to restore a bank', () => {
   expect(instance.getCode()).toBe('123')
   expect(instance.getUrl()).toBe('url.com')
 })
+
 test('should be able to update bank properties', () => {
   const instance = Bank.restore({
     bankId: 1,
@@ -39,4 +41,26 @@ test('should be able to update bank properties', () => {
   expect(instance.getName()).toBe('Other Name')
   expect(instance.getCode()).toBe('321')
   expect(instance.getUrl()).toBe('other_url.com')
+})
+
+test('should not be able to create a bank with invalid name', () => {
+  const invalidName = 'abc'
+  expect(() =>
+    Bank.create({
+      name: invalidName,
+      code: '123',
+      url: 'url',
+    }),
+  ).toThrow('Invalid name.')
+})
+
+test('should not be able to create a bank with invalid code', () => {
+  const invalidCode = 'abc'
+  expect(() =>
+    Bank.create({
+      name: 'Test Bank',
+      code: invalidCode,
+      url: 'url',
+    }),
+  ).toThrow('Invalid code.')
 })

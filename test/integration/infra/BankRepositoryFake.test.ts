@@ -12,7 +12,7 @@ beforeEach(() => {
 test('should be able to test bank access', async () => {
   const bank = Bank.create({
     code: '123',
-    name: 'name',
+    name: 'Test Bank',
     url: 'url.com',
   })
   const bankSaved = await sut.save(bank)
@@ -22,17 +22,17 @@ test('should be able to test bank access', async () => {
   )
   expect(exists).toBeTruthy()
   expect(exists?.getCode()).toBe('123')
-  expect(exists?.getName()).toBe('name')
+  expect(exists?.getName()).toBe('Test Bank')
   expect(exists?.getUrl()).toBe('url.com')
   bankSaved.setCode('321')
-  bankSaved.setName('altered')
-  bankSaved.setUrl('altered.com')
+  bankSaved.setName('Test Bank Updated')
+  bankSaved.setUrl('updated.com')
   await sut.update(bankSaved)
   const bankUpdated = await sut.findById(bankSaved.getBankId())
   expect(bankUpdated).toBeTruthy()
   expect(bankUpdated?.getCode()).toBe('321')
-  expect(bankUpdated?.getName()).toBe('altered')
-  expect(bankUpdated?.getUrl()).toBe('altered.com')
+  expect(bankUpdated?.getName()).toBe('Test Bank Updated')
+  expect(bankUpdated?.getUrl()).toBe('updated.com')
   await sut.remove(bankSaved.getBankId())
   const bankData = await sut.findById(bankSaved.getBankId())
   expect(bankData).toBeFalsy()
@@ -41,7 +41,7 @@ test('should be able to test bank access', async () => {
 test('should be able to return a bank by code', async () => {
   const bank = Bank.create({
     code: '123',
-    name: 'name',
+    name: 'Test Bank',
     url: 'url.com',
   })
   const bankSaved = await sut.save(bank)
@@ -49,7 +49,7 @@ test('should be able to return a bank by code', async () => {
   expect(savedBank).toBeTruthy()
   expect(savedBank!.getBankId()).toBe(bankSaved.getBankId())
   expect(savedBank!.getCode()).toBe('123')
-  expect(savedBank!.getName()).toBe('name')
+  expect(savedBank!.getName()).toBe('Test Bank')
   expect(savedBank!.getUrl()).toBe('url.com')
   await sut.remove(bankSaved.getBankId())
 })

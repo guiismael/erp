@@ -14,7 +14,7 @@ beforeAll(() => {
 
 test('should be able to alter a bank data', async () => {
   const bank = Bank.create({
-    code: 'AAA',
+    code: '123',
     name: 'Any name',
     url: 'url.com',
   })
@@ -22,7 +22,7 @@ test('should be able to alter a bank data', async () => {
   const bankId = bankSaved.getBankId()
   const inputUpdate = {
     id: bankId,
-    code: '553',
+    code: '321',
     name: 'Test Name Changed',
     url: 'teste.changed.com',
   }
@@ -42,7 +42,7 @@ test('should be able to alter a bank data', async () => {
 
 test('should not be able to update a bank with invalid name', async () => {
   const bank = Bank.create({
-    code: 'AAA',
+    code: '123',
     name: 'Any name',
     url: 'url.com',
   })
@@ -61,7 +61,7 @@ test('should not be able to update a bank with invalid name', async () => {
 
 test('should not be able to update a bank with invalid code', async () => {
   const bank = Bank.create({
-    code: 'AAA',
+    code: '123',
     name: 'Any name',
     url: 'url.com',
   })
