@@ -1,52 +1,55 @@
-import { BankDAO } from '@BankDAO.ts'
+import { Bank } from '@Bank.ts'
+import { BankRepository } from '@BankRepository.ts'
 import { UpdateBank } from '@UpdateBank.ts'
 
-import { BankDAOFake } from '../../mocks/BankDAOFake.ts'
+import { BankRepositoryFake } from '../../mocks/BankRepositoryFake.ts'
 
-let bankDao: BankDAO
+let bankRepository: BankRepository
 let sut: UpdateBank
 
 beforeAll(() => {
-  bankDao = new BankDAOFake()
-  sut = new UpdateBank(bankDao)
+  bankRepository = new BankRepositoryFake()
+  sut = new UpdateBank(bankRepository)
 })
 
 test('should be able to alter a bank data', async () => {
-  const inputCreate = {
-    code: '553',
-    name: `Test Name`,
-    url: 'teste4.com',
-  }
-  const bankId = await bankDao.save(inputCreate)
+  const bank = Bank.create({
+    code: 'AAA',
+    name: 'Any name',
+    url: 'url',
+  })
+  const bankSaved = await bankRepository.save(bank)
+  const bankId = bankSaved.getBankId()
   const inputUpdate = {
     id: bankId,
     code: '553',
     name: 'Test Name Changed',
-    url: 'teste4.changed.com',
+    url: 'teste.changed.com',
   }
   const outputUpdate = await sut.execute(inputUpdate)
   expect(outputUpdate.id).toBe(bankId)
   expect(outputUpdate.code).toBe(inputUpdate.code)
   expect(outputUpdate.name).toBe(inputUpdate.name)
   expect(outputUpdate.url).toBe(inputUpdate.url)
-  const outputGet = await bankDao.getById(bankId)
-  expect(outputGet).toBeTruthy()
-  expect(outputGet?.bank_id).toBe(bankId)
-  expect(outputGet?.code).toBe(inputUpdate.code)
-  expect(outputGet?.name).toBe(inputUpdate.name)
-  expect(outputGet?.url).toBe(inputUpdate.url)
-  await bankDao.remove(bankId)
+  const bankUpdated = await bankRepository.findById(bankId)
+  expect(bankUpdated).toBeTruthy()
+  expect(bankUpdated?.getBankId()).toBe(bankId)
+  expect(bankUpdated?.getCode()).toBe(inputUpdate.code)
+  expect(bankUpdated?.getName()).toBe(inputUpdate.name)
+  expect(bankUpdated?.getUrl()).toBe(inputUpdate.url)
+  await bankRepository.remove(bankId)
 })
 
 test.each([null, undefined, '', 'Test'])(
   'should not be able to update a bank with invalid name %s',
   async (invalidName: any) => {
-    const inputCreate = {
-      code: '555',
-      name: invalidName,
-      url: 'test-invalid.com',
-    }
-    const bankId = await bankDao.save(inputCreate)
+    const bank = Bank.create({
+      code: 'AAA',
+      name: 'Any name',
+      url: 'url',
+    })
+    const bankSaved = await bankRepository.save(bank)
+    const bankId = bankSaved.getBankId()
     const inputUpdate = {
       id: bankId,
       code: '555',
@@ -54,19 +57,20 @@ test.each([null, undefined, '', 'Test'])(
       url: 'test.changed.com',
     }
     await expect(sut.execute(inputUpdate)).rejects.toThrow('Invalid name.')
-    await bankDao.remove(bankId)
+    await bankRepository.remove(bankId)
   },
 )
 
 test.each(['', undefined, null, 'Test', '1', '01', 'ABC'])(
   'should not be able to update a bank with invalid code %s',
   async (invalidCode: any) => {
-    const inputCreate = {
-      code: invalidCode,
-      name: 'Test Code',
-      url: 'test-invalid.com',
-    }
-    const bankId = await bankDao.save(inputCreate)
+    const bank = Bank.create({
+      code: 'AAA',
+      name: 'Any name',
+      url: 'url',
+    })
+    const bankSaved = await bankRepository.save(bank)
+    const bankId = bankSaved.getBankId()
     const inputUpdate = {
       id: bankId,
       code: invalidCode,
@@ -74,7 +78,7 @@ test.each(['', undefined, null, 'Test', '1', '01', 'ABC'])(
       url: 'test.changed.com',
     }
     await expect(sut.execute(inputUpdate)).rejects.toThrow('Invalid code.')
-    await bankDao.remove(bankId)
+    await bankRepository.remove(bankId)
   },
 )
 
@@ -89,21 +93,23 @@ test('should not be able to update an inexistent bank', async () => {
 })
 
 test('should not be able to update a bank with code used by other bank', async () => {
-  const firstInputCreate = {
-    code: '553',
+  const firstBank = Bank.create({
+    code: '123',
     name: 'Test Name',
-    url: 'teste4.com',
-  }
-  const firstBankId = await bankDao.save(firstInputCreate)
-  const secondInputCreate = {
-    code: '554',
+    url: 'url.com',
+  })
+  const firstBankSaved = await bankRepository.save(firstBank)
+  const firstBankId = firstBankSaved.getBankId()
+  const secondBank = Bank.create({
+    code: '234',
     name: 'Test Name',
-    url: 'teste4.com',
-  }
-  const secondBankId = await bankDao.save(secondInputCreate)
+    url: 'url.com',
+  })
+  const secondBankSaved = await bankRepository.save(secondBank)
+  const secondBankId = secondBankSaved.getBankId()
   const inputUpdate = {
     id: firstBankId,
-    code: '554',
+    code: '234',
     name: 'Test Name Changed',
     url: 'teste4.changed.com',
   }
@@ -111,33 +117,35 @@ test('should not be able to update a bank with code used by other bank', async (
     'Code already registered by other bank',
   )
 
-  await bankDao.remove(firstBankId)
-  await bankDao.remove(secondBankId)
+  await bankRepository.remove(firstBankId)
+  await bankRepository.remove(secondBankId)
 })
 
 test('should not be able to update a bank with name used by other bank', async () => {
-  const firstInputCreate = {
-    code: '553',
+  const firstBank = Bank.create({
+    code: '123',
     name: 'Test Name',
     url: 'teste.com',
-  }
-  const firstBankId = await bankDao.save(firstInputCreate)
-  const secondInputCreate = {
-    code: '553',
+  })
+  const firstBankSaved = await bankRepository.save(firstBank)
+  const firstBankId = firstBankSaved.getBankId()
+  const secondBank = Bank.create({
+    code: '123',
     name: 'Test Name Changed',
     url: 'teste.com',
-  }
-  const secondBankId = await bankDao.save(secondInputCreate)
+  })
+  const secondBankSaved = await bankRepository.save(secondBank)
+  const secondBankId = secondBankSaved.getBankId()
   const inputUpdate = {
     id: firstBankId,
-    code: firstInputCreate.code,
-    name: secondInputCreate.name,
+    code: firstBankSaved.getCode(),
+    name: secondBankSaved.getName(),
     url: 'teste.changed.com',
   }
   await expect(sut.execute(inputUpdate)).rejects.toThrow(
     'Name already registered by other bank',
   )
 
-  await bankDao.remove(firstBankId)
-  await bankDao.remove(secondBankId)
+  await bankRepository.remove(firstBankId)
+  await bankRepository.remove(secondBankId)
 })
