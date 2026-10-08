@@ -1,11 +1,12 @@
-import { BankDAO } from '@BankDAO.ts'
+import { Bank } from '@Bank.ts'
+import { BankRepository } from '@BankRepository.ts'
 import { UseCase } from '@UseCase.ts'
 
 export class CreateBank implements UseCase<
   CreateBank.Input,
   CreateBank.Output
 > {
-  constructor(private bankDao: BankDAO) {}
+  constructor(private bankRepository: BankRepository) {}
 
   async execute(input: CreateBank.Input): Promise<CreateBank.Output> {
     if (!input.name || !input.name.match(/^.+\s.+$/)) {
@@ -18,16 +19,27 @@ export class CreateBank implements UseCase<
     ) {
       throw new Error('Invalid code.')
     }
-    const alreadyExistsWithCode = await this.bankDao.getByCode(input.code)
+    const alreadyExistsWithCode = await this.bankRepository.findByCode(
+      input.code,
+    )
     if (alreadyExistsWithCode)
       throw new Error('A bank with this code already exists.')
-    const alreadyExistsWithName = await this.bankDao.getByName(input.name)
+    const alreadyExistsWithName = await this.bankRepository.findByName(
+      input.name,
+    )
     if (alreadyExistsWithName)
       throw new Error('A bank with this name already exists.')
-    const bankId = await this.bankDao.save(input)
+    const bank = Bank.create({
+      code: input.code,
+      name: input.name,
+      url: input.url,
+    })
+    const savedBank = await this.bankRepository.save(bank)
     const output = {
-      id: bankId,
-      ...input,
+      id: savedBank.getBankId(),
+      code: savedBank.getCode(),
+      name: savedBank.getName(),
+      url: savedBank.getUrl(),
     }
     return output
   }

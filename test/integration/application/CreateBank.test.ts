@@ -1,17 +1,20 @@
 import { BankDAO } from '@BankDAO.ts'
+import { BankRepository } from '@BankRepository.ts'
 import { CreateBank } from '@CreateBank.ts'
-import { GetBankById } from '@GetBankById.ts'
 
 import { BankDAOFake } from '../../mocks/BankDAOFake.ts'
+import { BankRepositoryFake } from '../../mocks/BankRepositoryFake.ts'
 
 let bankDao: BankDAO
-let getBankByIdUseCase: GetBankById
+// let getBankByIdUseCase: GetBankById
+let bankRepository: BankRepository
 let sut: CreateBank
 
 beforeEach(() => {
   bankDao = new BankDAOFake()
-  getBankByIdUseCase = new GetBankById(bankDao)
-  sut = new CreateBank(bankDao)
+  bankRepository = new BankRepositoryFake()
+  // getBankByIdUseCase = new GetBankById(bankDao)
+  sut = new CreateBank(bankRepository)
 })
 
 test('should be able to create a bank', async () => {
@@ -26,15 +29,16 @@ test('should be able to create a bank', async () => {
   expect(outputCreate.code).toBe(inputSut.code)
   expect(outputCreate.name).toBe(inputSut.name)
   expect(outputCreate.url).toBe(inputSut.url)
-  const inputGet = {
-    id: outputCreate.id,
-  }
-  const outputGet = await getBankByIdUseCase.execute(inputGet)
-  expect(outputGet?.id).toBe(outputCreate.id)
-  expect(outputGet?.code).toBe(inputSut.code)
-  expect(outputGet?.name).toBe(inputSut.name)
-  expect(outputGet?.url).toBe(inputSut.url)
-  await bankDao.remove(outputCreate.id)
+  // const inputGet = {
+  //   id: outputCreate.id,
+  // }
+  // const outputGet = await getBankByIdUseCase.execute(inputGet)
+  const bank = await bankRepository.findById(outputCreate.id)
+  expect(bank?.getBankId()).toBe(outputCreate.id)
+  expect(bank?.getCode()).toBe(inputSut.code)
+  expect(bank?.getName()).toBe(inputSut.name)
+  expect(bank?.getUrl()).toBe(inputSut.url)
+  await bankRepository.remove(outputCreate.id)
 })
 
 test.each(['', undefined, null, 'Test'])(

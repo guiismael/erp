@@ -6,7 +6,7 @@ const baseUrl = 'http://localhost:3000'
 
 test('should be able to return a bank list (GET /banks)', async () => {
   const inputCreate = {
-    code: '123',
+    code: '987',
     name: 'Test List',
     url: 'test-list.com',
   }
