@@ -1,5 +1,7 @@
 import { BankRepository } from '@BankRepository.ts'
 import { UseCase } from '@UseCase.ts'
+import { validateBankCode } from '@validateBankCode.ts'
+import { validateBankName } from '@validateBankName.ts'
 
 export class UpdateBank implements UseCase<
   UpdateBank.Input,
@@ -8,16 +10,8 @@ export class UpdateBank implements UseCase<
   constructor(private bankRepository: BankRepository) {}
 
   async execute(input: UpdateBank.Input): Promise<UpdateBank.Output> {
-    if (!input.name || !input.name.match(/^.+\s.+$/)) {
-      throw new Error('Invalid name.')
-    }
-    if (
-      !input.code ||
-      input.code.length !== 3 ||
-      input.code.replace(/\D/g, '').length !== 3
-    ) {
-      throw new Error('Invalid code.')
-    }
+    if (!validateBankName(input.name)) throw new Error('Invalid name.')
+    if (!validateBankCode(input.code)) throw new Error('Invalid code.')
     const bank = await this.bankRepository.findById(input.id)
     if (!bank) throw new Error('Bank not found.')
     if (bank.getCode() !== input.code) {

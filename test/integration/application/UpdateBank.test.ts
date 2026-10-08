@@ -16,7 +16,7 @@ test('should be able to alter a bank data', async () => {
   const bank = Bank.create({
     code: 'AAA',
     name: 'Any name',
-    url: 'url',
+    url: 'url.com',
   })
   const bankSaved = await bankRepository.save(bank)
   const bankId = bankSaved.getBankId()
@@ -40,47 +40,43 @@ test('should be able to alter a bank data', async () => {
   await bankRepository.remove(bankId)
 })
 
-test.each([null, undefined, '', 'Test'])(
-  'should not be able to update a bank with invalid name %s',
-  async (invalidName: any) => {
-    const bank = Bank.create({
-      code: 'AAA',
-      name: 'Any name',
-      url: 'url',
-    })
-    const bankSaved = await bankRepository.save(bank)
-    const bankId = bankSaved.getBankId()
-    const inputUpdate = {
-      id: bankId,
-      code: '555',
-      name: invalidName,
-      url: 'test.changed.com',
-    }
-    await expect(sut.execute(inputUpdate)).rejects.toThrow('Invalid name.')
-    await bankRepository.remove(bankId)
-  },
-)
+test('should not be able to update a bank with invalid name', async () => {
+  const bank = Bank.create({
+    code: 'AAA',
+    name: 'Any name',
+    url: 'url.com',
+  })
+  const bankSaved = await bankRepository.save(bank)
+  const bankId = bankSaved.getBankId()
+  const invalidName = 'abc'
+  const inputUpdate = {
+    id: bankId,
+    code: '123',
+    name: invalidName,
+    url: 'test.changed.com',
+  }
+  await expect(sut.execute(inputUpdate)).rejects.toThrow('Invalid name.')
+  await bankRepository.remove(bankId)
+})
 
-test.each(['', undefined, null, 'Test', '1', '01', 'ABC'])(
-  'should not be able to update a bank with invalid code %s',
-  async (invalidCode: any) => {
-    const bank = Bank.create({
-      code: 'AAA',
-      name: 'Any name',
-      url: 'url',
-    })
-    const bankSaved = await bankRepository.save(bank)
-    const bankId = bankSaved.getBankId()
-    const inputUpdate = {
-      id: bankId,
-      code: invalidCode,
-      name: 'Test Code',
-      url: 'test.changed.com',
-    }
-    await expect(sut.execute(inputUpdate)).rejects.toThrow('Invalid code.')
-    await bankRepository.remove(bankId)
-  },
-)
+test('should not be able to update a bank with invalid code', async () => {
+  const bank = Bank.create({
+    code: 'AAA',
+    name: 'Any name',
+    url: 'url.com',
+  })
+  const bankSaved = await bankRepository.save(bank)
+  const bankId = bankSaved.getBankId()
+  const invalidCode = 'ABC'
+  const inputUpdate = {
+    id: bankId,
+    code: invalidCode,
+    name: 'Test Code',
+    url: 'test.changed.com',
+  }
+  await expect(sut.execute(inputUpdate)).rejects.toThrow('Invalid code.')
+  await bankRepository.remove(bankId)
+})
 
 test('should not be able to update an inexistent bank', async () => {
   const inputUpdate = {

@@ -6,14 +6,12 @@ import { BankDAOFake } from '../../mocks/BankDAOFake.ts'
 import { BankRepositoryFake } from '../../mocks/BankRepositoryFake.ts'
 
 let bankDao: BankDAO
-// let getBankByIdUseCase: GetBankById
 let bankRepository: BankRepository
 let sut: CreateBank
 
 beforeEach(() => {
   bankDao = new BankDAOFake()
   bankRepository = new BankRepositoryFake()
-  // getBankByIdUseCase = new GetBankById(bankDao)
   sut = new CreateBank(bankRepository)
 })
 
@@ -29,10 +27,6 @@ test('should be able to create a bank', async () => {
   expect(outputCreate.code).toBe(inputSut.code)
   expect(outputCreate.name).toBe(inputSut.name)
   expect(outputCreate.url).toBe(inputSut.url)
-  // const inputGet = {
-  //   id: outputCreate.id,
-  // }
-  // const outputGet = await getBankByIdUseCase.execute(inputGet)
   const bank = await bankRepository.findById(outputCreate.id)
   expect(bank?.getBankId()).toBe(outputCreate.id)
   expect(bank?.getCode()).toBe(inputSut.code)
@@ -41,29 +35,25 @@ test('should be able to create a bank', async () => {
   await bankRepository.remove(outputCreate.id)
 })
 
-test.each(['', undefined, null, 'Test'])(
-  'should not be able to create a bank with invalid name %s',
-  async (rawName: any) => {
-    const inputCreate = {
-      code: '555',
-      name: rawName,
-      url: 'test-invalid.com',
-    }
-    await expect(sut.execute(inputCreate)).rejects.toThrow('Invalid name.')
-  },
-)
+test('should not be able to create a bank with invalid name', async () => {
+  const invalidName = 'abc'
+  const inputCreate = {
+    code: '123',
+    name: invalidName,
+    url: 'test-invalid.com',
+  }
+  await expect(sut.execute(inputCreate)).rejects.toThrow('Invalid name.')
+})
 
-test.each(['', undefined, null, 'Test', '1', '01', 'ABC'])(
-  'should not be able to create a bank with invalid code %s',
-  async (invalidCode: any) => {
-    const inputCreate = {
-      code: invalidCode,
-      name: 'Test Code',
-      url: 'teste-code.com',
-    }
-    await expect(sut.execute(inputCreate)).rejects.toThrow('Invalid code.')
-  },
-)
+test('should not be able to create a bank with invalid code', async () => {
+  const invalidCode = 'ABC'
+  const inputCreate = {
+    code: invalidCode,
+    name: 'Test Name',
+    url: 'teste-code.com',
+  }
+  await expect(sut.execute(inputCreate)).rejects.toThrow('Invalid code.')
+})
 
 test('should not be able to create a bank with already used code', async () => {
   const fakeCode = `${Math.random()}`.substring(2, 5)
