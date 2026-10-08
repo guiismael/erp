@@ -27,14 +27,14 @@ test('should be able to test bank access', async () => {
   await bankDao.update({
     id: bankId,
     code: '321',
-    name: 'altered',
-    url: 'altered',
+    name: 'Test Bank Updated',
+    url: 'updated.com',
   })
   const bankUpdated = await bankDao.getById(bankId)
   expect(bankUpdated).toBeTruthy()
   expect(bankUpdated!.code).toBe('321')
-  expect(bankUpdated!.name).toBe('altered')
-  expect(bankUpdated!.url).toBe('altered')
+  expect(bankUpdated!.name).toBe('Test Bank Updated')
+  expect(bankUpdated!.url).toBe('updated.com')
   await bankDao.remove(bankId)
   const bankData = await bankDao.getById(bankId)
   expect(bankData).toBeFalsy()
