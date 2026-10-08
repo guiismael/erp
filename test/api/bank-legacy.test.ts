@@ -57,7 +57,7 @@ test('should be able to return a bank (GET /banks/:id)', async () => {
 test('should be able to create a bank (POST /banks)', async () => {
   const inputCreate = {
     code: '345',
-    name: 'Test create',
+    name: `Test Name ${Math.random()}`,
     url: 'test-create.com',
   }
   const responseCreate = await axios.post(`${baseUrl}/banks`, inputCreate)

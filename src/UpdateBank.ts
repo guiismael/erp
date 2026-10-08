@@ -20,7 +20,7 @@ export class UpdateBank implements UseCase<
       )
       if (alreadyExistsWithCode)
         throw new Error('Code already registered by other bank.')
-      bank.setCode(input.code)
+      bank.changeCode(input.code)
     }
     if (bank.getName() !== input.name) {
       const alreadyExistsWithCode = await this.bankRepository.findByName(
@@ -28,7 +28,7 @@ export class UpdateBank implements UseCase<
       )
       if (alreadyExistsWithCode)
         throw new Error('Name already registered by other bank')
-      bank.setName(input.name)
+      bank.changeName(input.name)
     }
     bank.setUrl(input.url)
     await this.bankRepository.update(bank)
