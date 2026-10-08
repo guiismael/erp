@@ -1,3 +1,10 @@
+## [0.4.1](https://github.com/guiismael/erp/compare/v0.4.0...v0.4.1) (2026-10-08)
+
+
+### Bug Fixes
+
+* **banks:** create `compose.yaml` and add index to table banks ([19dfcb6](https://github.com/guiismael/erp/commit/19dfcb63cdfd14c641afcf1a7a14d20a6177b8c8))
+
 ## [0.4.0](https://github.com/guiismael/erp/compare/v0.3.0...v0.4.0) (2026-10-08)
 
 
@@ -26,6 +33,4 @@
 * **banks:** ensure that a bank can not be updated with invalid name ([691f057](https://github.com/guiismael/erp/commit/691f0574f437506e3b9a74823a1d3b92ad522d6c))
 
 ## [0.1.7](https://github.com/guiismael/erp/compare/v0.1.6...v0.1.7) (2026-10-06)
-
-## [0.1.6](https://github.com/guiismael/erp/compare/v0.1.5...v0.1.6) (2026-10-06)
 
