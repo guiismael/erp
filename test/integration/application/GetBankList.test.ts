@@ -1,31 +1,33 @@
-import { BankDAO } from '@BankDAO.ts'
+import { Bank } from '@Bank.ts'
+import { BankRepository } from '@BankRepository.ts'
 import { GetBankList } from '@GetBankList.ts'
 
-import { BankDAOFake } from '../../mocks/BankDAOFake.ts'
+import { BankRepositoryFake } from '../../mocks/BankRepositoryFake.ts'
 
-let bankDao: BankDAO
+let bankRepository: BankRepository
 let sut: GetBankList
 
 beforeAll(() => {
-  bankDao = new BankDAOFake()
-  sut = new GetBankList(bankDao)
+  bankRepository = new BankRepositoryFake()
+  sut = new GetBankList(bankRepository)
 })
 
 test('should be able to return a bank list', async () => {
-  const inputCreate = {
-    code: '559',
-    name: `Test List`,
-    url: 'test-list.com',
-  }
-  const bankId = await bankDao.save(inputCreate)
+  const bank = Bank.create({
+    code: 'AAA',
+    name: 'Any name',
+    url: 'url.com',
+  })
+  const bankSaved = await bankRepository.save(bank)
+  const bankId = bankSaved.getBankId()
   const output = await sut.execute()
   expect(output).toBeInstanceOf(Array)
   expect(output.length).toBeGreaterThanOrEqual(1)
   const bankData = output.find((item) => item.id === bankId)
   expect(bankData).toBeTruthy()
   expect(bankData?.id).toBe(bankId)
-  expect(bankData?.code).toBe(inputCreate.code)
-  expect(bankData?.name).toBe(inputCreate.name)
-  expect(bankData?.url).toBe(inputCreate.url)
-  await bankDao.remove(bankId)
+  expect(bankData?.code).toBe(bankSaved.getCode())
+  expect(bankData?.name).toBe(bankSaved.getName())
+  expect(bankData?.url).toBe(bankSaved.getUrl())
+  await bankRepository.remove(bankId)
 })

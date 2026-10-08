@@ -16,7 +16,7 @@ const bankDao = new BankDAODatabase()
 const bankRepository = new BankRepositoryDatabase()
 
 app.get('/banks', async (request: Request, response: Response) => {
-  const usecase = new GetBankList(bankDao)
+  const usecase = new GetBankList(bankRepository)
   const output = await usecase.execute()
   return response.status(200).json(output)
 })
