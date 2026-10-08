@@ -1,3 +1,5 @@
+## [0.4.2](https://github.com/guiismael/erp/compare/v0.4.1...v0.4.2) (2026-10-08)
+
 ## [0.4.1](https://github.com/guiismael/erp/compare/v0.4.0...v0.4.1) (2026-10-08)
 
 
@@ -31,6 +33,4 @@
 * **banks:** ensure that a bank can not be updated if not exists ([34ba2e4](https://github.com/guiismael/erp/commit/34ba2e48e5556e0467fdafe610fd37a8bebc78fb))
 * **banks:** ensure that a bank can not be updated with invalid code ([6022646](https://github.com/guiismael/erp/commit/6022646263dd5b2a5a563035184b6040aeaebf57))
 * **banks:** ensure that a bank can not be updated with invalid name ([691f057](https://github.com/guiismael/erp/commit/691f0574f437506e3b9a74823a1d3b92ad522d6c))
-
-## [0.1.7](https://github.com/guiismael/erp/compare/v0.1.6...v0.1.7) (2026-10-06)
 
