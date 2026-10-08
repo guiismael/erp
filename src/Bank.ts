@@ -36,11 +36,13 @@ export class Bank {
     return this.url
   }
 
-  setName(name: string) {
+  changeName(name: string) {
+    if (!validateBankName(name)) throw new Error('Invalid name.')
     this.name = name
   }
 
-  setCode(code: string) {
+  changeCode(code: string) {
+    if (!validateBankCode(code)) throw new Error('Invalid code.')
     this.code = code
   }
 

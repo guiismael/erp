@@ -34,8 +34,8 @@ test('should be able to update bank properties', () => {
     code: '123',
     url: 'url.com',
   })
-  instance.setCode('321')
-  instance.setName('Other Name')
+  instance.changeCode('321')
+  instance.changeName('Other Name')
   instance.setUrl('other_url.com')
   expect(instance).toBeTruthy()
   expect(instance.getName()).toBe('Other Name')
@@ -63,4 +63,24 @@ test('should not be able to create a bank with invalid code', () => {
       url: 'url',
     }),
   ).toThrow('Invalid code.')
+})
+
+test('should not be able to change name with invalid name', () => {
+  const instance = Bank.create({
+    code: '123',
+    name: 'Test Name',
+    url: 'any_url.com',
+  })
+  const invalidName = 'abc'
+  expect(() => instance.changeName(invalidName)).toThrow('Invalid name.')
+})
+
+test('should not be able to change code with invalid code', () => {
+  const instance = Bank.create({
+    code: '123',
+    name: 'Test Name',
+    url: 'any_url.com',
+  })
+  const invalidCode = 'abc'
+  expect(() => instance.changeCode(invalidCode)).toThrow('Invalid code.')
 })
