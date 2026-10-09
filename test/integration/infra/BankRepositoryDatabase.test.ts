@@ -1,17 +1,19 @@
 import { ApplicationError } from '@ApplicationError.ts'
 import { Bank } from '@Bank.ts'
 import { BankRepository, BankRepositoryDatabase } from '@BankRepository.ts'
-import mysqlConnection from 'mysql2/promise'
+import { DatabaseConnection } from '@DatabaseConnection.ts'
+import { MySQLAdapter } from '@MySQLAdapter.ts'
 
 let sut: BankRepository
-const connection = mysqlConnection.createPool(String(process.env.DATABASE_URL))
+let connection: DatabaseConnection
 
 beforeAll(() => {
-  sut = new BankRepositoryDatabase()
+  connection = new MySQLAdapter(String(process.env.DATABASE_URL))
+  sut = new BankRepositoryDatabase(connection)
 })
 
-afterAll(() => {
-  connection.pool.end()
+afterAll(async () => {
+  await connection.close()
 })
 
 test('should be able to test bank access', async () => {

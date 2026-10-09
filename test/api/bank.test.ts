@@ -1,14 +1,19 @@
+import { DatabaseConnection } from '@DatabaseConnection.ts'
+import { MySQLAdapter } from '@MySQLAdapter.ts'
 import axios from 'axios'
-import mysqlConnection from 'mysql2/promise'
 
 axios.defaults.validateStatus = () => true
 
 const baseUrl = 'http://localhost:3000'
 
-const connection = mysqlConnection.createPool(String(process.env.DATABASE_URL))
+let connection: DatabaseConnection
 
-afterAll(() => {
-  connection.pool.end()
+beforeAll(() => {
+  connection = new MySQLAdapter(String(process.env.DATABASE_URL))
+})
+
+afterAll(async () => {
+  await connection.close()
 })
 
 test('should be able to return a bank list (GET /banks)', async () => {
