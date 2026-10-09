@@ -47,15 +47,14 @@ export class BankRepositoryDatabase implements BankRepository {
 
   async remove(bankId: number) {
     if (isNaN(bankId)) throw new ApplicationError('Invalid bank id.')
-    await this.connection.query(
-      `DELETE FROM banks WHERE bank_id = ? LIMIT 1;`,
-      [bankId],
-    )
+    await this.connection.query(`DELETE FROM banks WHERE bank_id = ?;`, [
+      bankId,
+    ])
   }
 
   async findById(bankId: number): Promise<Bank | undefined> {
     const [firstRow] = await this.connection.query(
-      `SELECT * FROM banks WHERE bank_id = ? LIMIT 1`,
+      `SELECT * FROM banks WHERE bank_id = ?;`,
       [bankId],
     )
     if (!firstRow) return
@@ -70,7 +69,7 @@ export class BankRepositoryDatabase implements BankRepository {
 
   async findByCode(code: string): Promise<Bank | undefined> {
     const [firstRow] = await this.connection.query(
-      `SELECT * FROM banks WHERE code = ? LIMIT 1`,
+      `SELECT * FROM banks WHERE code = ?;`,
       [code],
     )
     if (!firstRow) return
@@ -85,7 +84,7 @@ export class BankRepositoryDatabase implements BankRepository {
 
   async findByName(name: string): Promise<Bank | undefined> {
     const [firstRow] = await this.connection.query(
-      `SELECT * FROM banks WHERE name = ? LIMIT 1`,
+      `SELECT * FROM banks WHERE name = ?;`,
       [name],
     )
     if (!firstRow) return
