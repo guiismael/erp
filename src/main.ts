@@ -4,14 +4,14 @@ import { CreateBank } from '@CreateBank.ts'
 import { FastifyAdapter } from '@FastifyAdapter.ts'
 import { GetBankById } from '@GetBankById.ts'
 import { GetBankList } from '@GetBankList.ts'
-import { MySQLAdapter } from '@MySQLAdapter.ts'
+import { PostgreSQLAdapter } from '@PostgreSQLAdapter.ts'
 import { RemoveBank } from '@RemoveBank.ts'
 import { UpdateBank } from '@UpdateBank.ts'
 
-const databaseConnection = new MySQLAdapter(String(process.env.DATABASE_URL))
-// const databaseConnection = new PostgreSQLAdapter(
-//   String(process.env.DATABASE_URL_PG),
-// )
+// const databaseConnection = new MySQLAdapter(String(process.env.DATABASE_URL))
+const databaseConnection = new PostgreSQLAdapter(
+  String(process.env.DATABASE_URL_PG),
+)
 const bankRepository = new BankRepositoryDatabase(databaseConnection)
 
 // const httpRestServer: HttpRestServer = new ExpressAdapter()

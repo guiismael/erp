@@ -1,14 +1,14 @@
 import { ApplicationError } from '@ApplicationError.ts'
 import { BankDAO, BankDAODatabase } from '@BankDAO.ts'
 import { DatabaseConnection } from '@DatabaseConnection.ts'
-import { MySQLAdapter } from '@MySQLAdapter.ts'
+import { PostgreSQLAdapter } from '@PostgreSQLAdapter.ts'
 import Sinon from 'sinon'
 
 let sut: BankDAO
 let connection: DatabaseConnection
 
 beforeAll(() => {
-  connection = new MySQLAdapter(String(process.env.DATABASE_URL))
+  connection = new PostgreSQLAdapter(String(process.env.DATABASE_URL_PG))
   sut = new BankDAODatabase(connection)
 })
 

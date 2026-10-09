@@ -2,15 +2,15 @@ import { HttpRestServer } from '@BankRestController.ts'
 import { DatabaseConnection } from '@DatabaseConnection.ts'
 import { FetchAdapter } from '@FetchAdapter.ts'
 import { HttpClient } from '@HttpClient.ts'
-import { MySQLAdapter } from '@MySQLAdapter.ts'
+import { PostgreSQLAdapter } from '@PostgreSQLAdapter.ts'
 
 const baseUrl = 'http://localhost:3000'
 let connection: DatabaseConnection
 let httpClient: HttpClient
 
 beforeAll(() => {
-  connection = new MySQLAdapter(String(process.env.DATABASE_URL))
-  // connection = new PostgreSQLAdapter(String(process.env.DATABASE_URL_PG))
+  // connection = new MySQLAdapter(String(process.env.DATABASE_URL))
+  connection = new PostgreSQLAdapter(String(process.env.DATABASE_URL_PG))
   httpClient = new FetchAdapter()
 })
 

@@ -2,13 +2,13 @@ import { ApplicationError } from '@ApplicationError.ts'
 import { Bank } from '@Bank.ts'
 import { BankRepository, BankRepositoryDatabase } from '@BankRepository.ts'
 import { DatabaseConnection } from '@DatabaseConnection.ts'
-import { MySQLAdapter } from '@MySQLAdapter.ts'
+import { PostgreSQLAdapter } from '@PostgreSQLAdapter.ts'
 
 let sut: BankRepository
 let connection: DatabaseConnection
 
 beforeAll(() => {
-  connection = new MySQLAdapter(String(process.env.DATABASE_URL))
+  connection = new PostgreSQLAdapter(String(process.env.DATABASE_URL_PG))
   sut = new BankRepositoryDatabase(connection)
 })
 
