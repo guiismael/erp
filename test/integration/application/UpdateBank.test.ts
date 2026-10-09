@@ -1,6 +1,7 @@
 import { ApplicationError } from '@ApplicationError.ts'
 import { Bank } from '@Bank.ts'
 import { BankRepository } from '@BankRepository.ts'
+import { NotFoundError } from '@NotFoundError.ts'
 import { UpdateBank } from '@UpdateBank.ts'
 
 import { BankRepositoryFake } from '../../mocks/BankRepositoryFake.ts'
@@ -11,6 +12,18 @@ let sut: UpdateBank
 beforeAll(() => {
   bankRepository = new BankRepositoryFake()
   sut = new UpdateBank(bankRepository)
+})
+
+test('should not be able to updated an inexistent bank', async () => {
+  const inputUpdate = {
+    id: 9_999_999,
+    code: '123',
+    name: 'Test Name Changed',
+    url: 'teste.changed.com',
+  }
+  await expect(sut.execute(inputUpdate)).rejects.toThrow(
+    new NotFoundError('Bank not found.'),
+  )
 })
 
 test('should be able to alter a bank data', async () => {

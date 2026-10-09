@@ -1,3 +1,4 @@
+import { ApplicationError } from '@ApplicationError.ts'
 import { Bank } from '@Bank.ts'
 import mysqlConnection from 'mysql2/promise'
 
@@ -51,7 +52,7 @@ export class BankRepositoryDatabase implements BankRepository {
   }
 
   async remove(bankId: number) {
-    if (isNaN(bankId)) throw new Error('Invalid bank id.')
+    if (isNaN(bankId)) throw new ApplicationError('Invalid bank id.')
     const connection = mysqlConnection.createPool(
       String(process.env.DATABASE_URL),
     )

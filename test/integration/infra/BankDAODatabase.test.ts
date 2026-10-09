@@ -1,3 +1,4 @@
+import { ApplicationError } from '@ApplicationError.ts'
 import { BankDAO, BankDAODatabase } from '@BankDAO.ts'
 import mysqlConnection from 'mysql2/promise'
 
@@ -74,5 +75,7 @@ test('should be able to return a bank by name', async () => {
 })
 
 test('should be able to thrown an error if bank id isnt a number on bank remove', async () => {
-  await expect(bankDao.remove('asd' as any)).rejects.toThrow('Invalid bank id.')
+  await expect(bankDao.remove('asd' as any)).rejects.toThrow(
+    new ApplicationError('Invalid bank id.'),
+  )
 })

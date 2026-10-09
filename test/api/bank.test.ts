@@ -66,7 +66,7 @@ test('should be able to return a bank (GET /banks/:id)', async () => {
 })
 
 test('should be able to create a bank (POST /banks)', async () => {
-  const fakeCode = `${Math.random()}`.substring(2, 5)
+  const fakeCode = `${Math.random()}`.substring(3, 6)
   const fakeName = `Name ${Math.random()}`
   await connection.query(`DELETE FROM banks WHERE code = ? OR name = ?`, [
     fakeCode,
@@ -104,6 +104,7 @@ test.each([''])(
     const responseCreate = await axios.post(`${baseUrl}/banks`, inputCreate)
     expect(responseCreate.status).toBe(422)
     const outputCreate = responseCreate.data
+    expect(outputCreate.code).toBe('DOMAIN_ERROR')
     expect(outputCreate.message).toBe('Invalid name.')
   },
 )
@@ -119,6 +120,7 @@ test.each(['ABC'])(
     const responseCreate = await axios.post(`${baseUrl}/banks`, inputCreate)
     expect(responseCreate.status).toBe(422)
     const outputCreate = responseCreate.data
+    expect(outputCreate.code).toBe('DOMAIN_ERROR')
     expect(outputCreate.message).toBe('Invalid code.')
   },
 )
@@ -173,10 +175,10 @@ test.each(['Test'])(
   async (invalidName: any) => {
     const fakeCode = `${Math.random()}`.substring(2, 5)
     const fakeName = `Name ${Math.random()}`
-    await connection.query(`DELETE FROM banks WHERE code = ? OR name = ?`, [
-      fakeCode,
-      fakeName,
-    ])
+    await connection.query(
+      `DELETE FROM banks WHERE code = ? OR name = ? OR name = ?`,
+      [fakeCode, fakeName, invalidName],
+    )
     const inputCreate = {
       code: fakeCode,
       name: fakeName,
@@ -185,9 +187,8 @@ test.each(['Test'])(
     const responseCreate = await axios.post(`${baseUrl}/banks`, inputCreate)
     const outputCreate = responseCreate.data
     const bankId = outputCreate.id
-    const fakeCodeToUpdate = `${Math.random()}`.substring(2, 5)
     const inputUpdate = {
-      code: fakeCodeToUpdate,
+      code: fakeCode,
       name: invalidName,
       url: 'teste.updated.com',
     }
@@ -197,6 +198,7 @@ test.each(['Test'])(
     )
     expect(responseUpdate.status).toBe(422)
     const outputUpdate = responseUpdate.data
+    expect(outputUpdate.code).toBe('DOMAIN_ERROR')
     expect(outputUpdate.message).toBe('Invalid name.')
     await axios.delete(`${baseUrl}/banks/${outputCreate.id}`)
   },
@@ -206,10 +208,14 @@ test.each(['Test'])(
   "should not be able to alter a bank with invalid code '%s' (PUT /banks/:id)",
   async (invalidCode: any) => {
     const fakeCode = `${Math.random()}`.substring(2, 5)
-    await connection.query(`DELETE FROM banks WHERE code = ?;`, [fakeCode])
+    const fakeName = `Test Name ${Math.random()}`
+    await connection.query(`DELETE FROM banks WHERE code = ? or name = ?;`, [
+      fakeCode,
+      fakeName,
+    ])
     const inputCreate = {
       code: fakeCode,
-      name: `Test Code ${Math.random()}`,
+      name: fakeName,
       url: 'teste.com',
     }
     const responseCreate = await axios.post(`${baseUrl}/banks`, inputCreate)
@@ -217,7 +223,7 @@ test.each(['Test'])(
     const bankId = outputCreate.id
     const inputUpdate = {
       code: invalidCode,
-      name: `Test Code ${Math.random()}`,
+      name: fakeName,
       url: 'teste.changed.com',
     }
     const responseUpdate = await axios.put(
@@ -226,6 +232,7 @@ test.each(['Test'])(
     )
     expect(responseUpdate.status).toBe(422)
     const outputUpdate = responseUpdate.data
+    expect(outputUpdate.code).toBe('DOMAIN_ERROR')
     expect(outputUpdate.message).toBe('Invalid code.')
     await axios.delete(`${baseUrl}/banks/${outputCreate.id}`)
   },
@@ -244,7 +251,15 @@ test('should not be able to update an inexistent bank (PUT /banks/:id)', async (
   )
   expect(responseUpdate.status).toBe(404)
   const outputUpdate = responseUpdate.data
+  expect(outputUpdate.code).toBe('NOT_FOUND_ERROR')
   expect(outputUpdate.message).toBe('Bank not found.')
+})
+
+test('should not be able to delete a bank with invalid id (DELETE /banks/:invalidId)', async () => {
+  const responseDelete = await axios.delete(`${baseUrl}/banks/abc`)
+  expect(responseDelete.status).toBe(422)
+  expect(responseDelete.data.code).toBe('APPLICATION_ERROR')
+  expect(responseDelete.data.message).toBe('Invalid bank id.')
 })
 
 test('should be able to delete a bank (DELETE /banks/:id)', async () => {
@@ -268,4 +283,12 @@ test('should be able to delete a bank (DELETE /banks/:id)', async () => {
   const responseGet = await axios.get(`${baseUrl}/banks/${bankId}`)
   expect(responseGet.status).toBe(404)
   expect(responseGet.data?.id).toBeFalsy()
+})
+
+test('should be able to return 404 if bank not found (GET /banks/:id)', async () => {
+  const responseGet = await axios.get(`${baseUrl}/banks/${9_999_999}`)
+  expect(responseGet.status).toBe(404)
+  const outputGet = responseGet.data
+  expect(outputGet.code).toBe('NOT_FOUND_ERROR')
+  expect(outputGet.message).toBe('Bank not found.')
 })

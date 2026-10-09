@@ -11,7 +11,7 @@ afterAll(() => {
 })
 
 test('should be able to return a bank list (GET /banks)', async () => {
-  const bankCode = '123'
+  const bankCode = '135'
   await connection.query(`DELETE FROM banks WHERE code = ?;`, [bankCode])
   const inputCreate = {
     code: bankCode,
@@ -26,7 +26,7 @@ test('should be able to return a bank list (GET /banks)', async () => {
   expect(response.status).toBe(200)
   expect(output).toBeInstanceOf(Array)
   expect(output.length).toBeGreaterThanOrEqual(1)
-  const bankData = output.find((item) => item.id === bankId)
+  const bankData = output.find((item: any) => item.id === bankId)
   expect(bankData).toBeTruthy()
   expect(bankData.id).toBe(bankId)
   expect(bankData.code).toBe(outputCreate.code)
