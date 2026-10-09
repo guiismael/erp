@@ -1,5 +1,6 @@
 import { DatabaseConnection } from '@DatabaseConnection.ts'
-import { AxiosAdapter, HttpClient } from '@HttpClient.ts'
+import { FetchAdapter } from '@FetchAdapter.ts'
+import { HttpClient } from '@HttpClient.ts'
 import { MySQLAdapter } from '@MySQLAdapter.ts'
 
 const baseUrl = 'http://localhost:3000'
@@ -8,7 +9,7 @@ let httpClient: HttpClient
 
 beforeAll(() => {
   connection = new MySQLAdapter(String(process.env.DATABASE_URL))
-  httpClient = new AxiosAdapter()
+  httpClient = new FetchAdapter()
 })
 
 afterAll(async () => {
