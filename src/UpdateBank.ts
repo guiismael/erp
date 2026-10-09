@@ -1,3 +1,4 @@
+import { ApplicationError } from '@ApplicationError.ts'
 import { BankRepository } from '@BankRepository.ts'
 import { UseCase } from '@UseCase.ts'
 
@@ -15,7 +16,7 @@ export class UpdateBank implements UseCase<
         input.code,
       )
       if (alreadyExistsWithCode)
-        throw new Error('Code already registered by other bank.')
+        throw new ApplicationError('Code already registered by other bank.')
       bank.changeCode(input.code)
     }
     if (bank.getName() !== input.name) {
@@ -23,7 +24,7 @@ export class UpdateBank implements UseCase<
         input.name,
       )
       if (alreadyExistsWithCode)
-        throw new Error('Name already registered by other bank')
+        throw new ApplicationError('Name already registered by other bank.')
       bank.changeName(input.name)
     }
     bank.setUrl(input.url)

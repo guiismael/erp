@@ -1,3 +1,4 @@
+import { ApplicationError } from '@ApplicationError.ts'
 import { Bank } from '@Bank.ts'
 import { BankRepository } from '@BankRepository.ts'
 import { UpdateBank } from '@UpdateBank.ts'
@@ -110,7 +111,7 @@ test('should not be able to update a bank with code used by other bank', async (
     url: 'teste4.changed.com',
   }
   await expect(sut.execute(inputUpdate)).rejects.toThrow(
-    'Code already registered by other bank',
+    new ApplicationError('Code already registered by other bank.'),
   )
 
   await bankRepository.remove(firstBankId)
@@ -139,7 +140,7 @@ test('should not be able to update a bank with name used by other bank', async (
     url: 'teste.changed.com',
   }
   await expect(sut.execute(inputUpdate)).rejects.toThrow(
-    'Name already registered by other bank',
+    new ApplicationError('Name already registered by other bank.'),
   )
 
   await bankRepository.remove(firstBankId)

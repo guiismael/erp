@@ -55,6 +55,7 @@ test('should be able to return a bank (GET /banks/:id)', async () => {
 })
 
 test('should be able to create a bank (POST /banks)', async () => {
+  await connection.query(`DELETE FROM banks WHERE code = ?;`, ['345'])
   const inputCreate = {
     code: '345',
     name: `Test Name ${Math.random()}`,

@@ -206,6 +206,7 @@ test.each(['Test'])(
   "should not be able to alter a bank with invalid code '%s' (PUT /banks/:id)",
   async (invalidCode: any) => {
     const fakeCode = `${Math.random()}`.substring(2, 5)
+    await connection.query(`DELETE FROM banks WHERE code = ?;`, [fakeCode])
     const inputCreate = {
       code: fakeCode,
       name: `Test Code ${Math.random()}`,

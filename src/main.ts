@@ -25,11 +25,12 @@ app.get('/banks/:id', async (request: Request, response: Response) => {
   const input = {
     id: bankId,
   }
-  const output = await usecase.execute(input)
-  if (!output) {
+  try {
+    const output = await usecase.execute(input)
+    return response.status(200).json(output)
+  } catch (error: any) {
     return response.status(404).end()
   }
-  return response.status(200).json(output)
 })
 
 app.post('/banks', async (request: Request, response: Response) => {
