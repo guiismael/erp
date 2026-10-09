@@ -42,6 +42,7 @@ test('should be able to return a bank list (GET /banks)', async () => {
 })
 
 test('should be able to return a bank (GET /banks/:id)', async () => {
+  await connection.query(`DELETE FROM banks WHERE code = ?;`, ['234'])
   const inputCreate = {
     code: '234',
     name: 'Test Get One',
@@ -124,6 +125,7 @@ test('should be able to alter a bank (PUT /banks/:id)', async () => {
 })
 
 test('should be able to delete a bank (DELETE /banks/:id)', async () => {
+  await connection.query(`DELETE FROM banks WHERE code = ?;`, ['567'])
   const inputCreate = {
     code: '567',
     name: 'Test Delete',

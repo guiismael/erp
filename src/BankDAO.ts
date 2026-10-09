@@ -47,7 +47,13 @@ export class BankDAODatabase implements BankDAO {
 
   async list(): Promise<BankDAO.BankDTO[]> {
     const rows = await this.connection.query(`SELECT * FROM banks;`, [])
-    return rows
+
+    return rows.map((row) => ({
+      bank_id: row.bank_id,
+      code: row.code,
+      name: row.name,
+      url: row.url,
+    }))
   }
 
   async remove(bankId: number) {
@@ -63,7 +69,13 @@ export class BankDAODatabase implements BankDAO {
       `SELECT * FROM banks WHERE bank_id = ? LIMIT 1`,
       [bankId],
     )
-    return firstRow
+    if (!firstRow) return
+    return {
+      bank_id: firstRow.bank_id,
+      code: firstRow.code,
+      name: firstRow.name,
+      url: firstRow.url,
+    }
   }
 
   async getByCode(code: string): Promise<BankDAO.BankDTO | undefined> {
@@ -71,7 +83,13 @@ export class BankDAODatabase implements BankDAO {
       `SELECT * FROM banks WHERE code = ? LIMIT 1`,
       [code],
     )
-    return firstRow
+    if (!firstRow) return
+    return {
+      bank_id: firstRow.bank_id,
+      code: firstRow.code,
+      name: firstRow.name,
+      url: firstRow.url,
+    }
   }
 
   async getByName(name: string): Promise<BankDAO.BankDTO | undefined> {
@@ -79,7 +97,13 @@ export class BankDAODatabase implements BankDAO {
       `SELECT * FROM banks WHERE name = ? LIMIT 1`,
       [name],
     )
-    return firstRow
+    if (!firstRow) return
+    return {
+      bank_id: firstRow.bank_id,
+      code: firstRow.code,
+      name: firstRow.name,
+      url: firstRow.url,
+    }
   }
 
   async update(dto: BankDAO.UpdateDTO) {
