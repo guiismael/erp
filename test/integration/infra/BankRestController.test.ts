@@ -22,17 +22,17 @@ test('should be able to call httpRestServer correctly', () => {
     {} as RemoveBank,
   )
   expect(registerSpy.called).toBeTruthy()
-  expect(registerSpy.calledWith('get', '/banks', Sinon.match.func)).toBeTruthy()
+  expect(registerSpy.calledWith('GET', '/banks', Sinon.match.func)).toBeTruthy()
   expect(
-    registerSpy.calledWith('get', '/banks/:id', Sinon.match.func),
+    registerSpy.calledWith('GET', '/banks/:id', Sinon.match.func),
   ).toBeTruthy()
   expect(
-    registerSpy.calledWith('post', '/banks', Sinon.match.func),
+    registerSpy.calledWith('POST', '/banks', Sinon.match.func),
   ).toBeTruthy()
   expect(
-    registerSpy.calledWith('put', '/banks/:id', Sinon.match.func),
+    registerSpy.calledWith('PUT', '/banks/:id', Sinon.match.func),
   ).toBeTruthy()
   expect(
-    registerSpy.calledWith('delete', '/banks/:id', Sinon.match.func),
+    registerSpy.calledWith('DELETE', '/banks/:id', Sinon.match.func),
   ).toBeTruthy()
 })
