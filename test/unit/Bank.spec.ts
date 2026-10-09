@@ -1,4 +1,5 @@
 import { Bank } from '@Bank.ts'
+import { DomainError } from '@DomainError.ts'
 
 test('should be able to create a bank', () => {
   const instance = Bank.create({
@@ -51,7 +52,7 @@ test('should not be able to create a bank with invalid name', () => {
       code: '123',
       url: 'url',
     }),
-  ).toThrow('Invalid name.')
+  ).toThrow(new DomainError('Invalid name.'))
 })
 
 test('should not be able to create a bank with invalid code', () => {
@@ -62,7 +63,7 @@ test('should not be able to create a bank with invalid code', () => {
       code: invalidCode,
       url: 'url',
     }),
-  ).toThrow('Invalid code.')
+  ).toThrow(new DomainError('Invalid code.'))
 })
 
 test('should not be able to change name with invalid name', () => {
@@ -72,7 +73,9 @@ test('should not be able to change name with invalid name', () => {
     url: 'any_url.com',
   })
   const invalidName = 'abc'
-  expect(() => instance.changeName(invalidName)).toThrow('Invalid name.')
+  expect(() => instance.changeName(invalidName)).toThrow(
+    new DomainError('Invalid name.'),
+  )
 })
 
 test('should not be able to change code with invalid code', () => {
@@ -82,5 +85,7 @@ test('should not be able to change code with invalid code', () => {
     url: 'any_url.com',
   })
   const invalidCode = 'abc'
-  expect(() => instance.changeCode(invalidCode)).toThrow('Invalid code.')
+  expect(() => instance.changeCode(invalidCode)).toThrow(
+    new DomainError('Invalid code.'),
+  )
 })
