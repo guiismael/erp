@@ -18,6 +18,11 @@
   "author": "",
   "license": "MIT",
   "type": "module",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mysql2": "^3.23.1"
+  },
   "devDependencies": {
     "@commitlint/cli": "^21.2.3",
     "@commitlint/config-conventional": "^21.2.3",
@@ -32,6 +37,7 @@
     "husky": "^9.1.7",
     "knex": "^3.2.10",
     "lint-staged": "^17.0.6",
+    "nock": "^14.0.16",
     "sinon": "^22.0.0",
     "tsup": "^8.5.1",
     "tsx": "^4.22.3",
@@ -42,10 +48,5 @@
     "*.ts": [
       "npm run lint:fix"
     ]
-  },
-  "dependencies": {
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "mysql2": "^3.23.1"
   }
 }
