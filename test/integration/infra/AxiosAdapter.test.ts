@@ -117,3 +117,16 @@ test('should call axios delete correctly and return correct data when request DE
   expect(response.statusCode).toBe(expectedCode)
   expect(response.body.test).toBe(expectedBody.test)
 })
+
+test('should return an empty body when the call return an empty body', async () => {
+  const url = 'http://localhost:4321'
+  const path = '/user'
+  const expectedCode = 200
+  nock(url).delete(path).reply(expectedCode)
+  const deleteSpy = Sinon.spy(axios, 'delete')
+  const response = await sut.delete(`${url}${path}`)
+  expect(deleteSpy.calledOnce).toBeTruthy()
+  expect(deleteSpy.calledWith(`${url}${path}`)).toBeTruthy()
+  expect(response.statusCode).toBe(expectedCode)
+  expect(response.body).toBeFalsy()
+})
