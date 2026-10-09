@@ -38,11 +38,12 @@ export class BankDAODatabase implements BankDAO {
     const connection = mysqlConnection.createPool(
       String(process.env.DATABASE_URL),
     )
-    const [row] = await connection.query(
-      `INSERT INTO banks(code, name, url) VALUES(?, ?, ?);`,
+    const [rows] = await connection.query<any[]>(
+      `INSERT INTO banks(code, name, url) VALUES(?, ?, ?) RETURNING *;`,
       [dto.code, dto.name, dto.url],
     )
-    const bankId = (row as any).insertId
+    const [row] = rows
+    const bankId = row.bank_id
     connection.pool.end()
     return bankId
   }
