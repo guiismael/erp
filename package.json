@@ -23,7 +23,9 @@
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "fastify": "^5.10.0",
-    "mysql2": "^3.23.1"
+    "mysql2": "^3.23.1",
+    "pg": "^8.22.0",
+    "pg-promise": "^12.7.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.3",

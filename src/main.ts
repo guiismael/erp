@@ -9,6 +9,9 @@ import { RemoveBank } from '@RemoveBank.ts'
 import { UpdateBank } from '@UpdateBank.ts'
 
 const databaseConnection = new MySQLAdapter(String(process.env.DATABASE_URL))
+// const databaseConnection = new PostgreSQLAdapter(
+//   String(process.env.DATABASE_URL_PG),
+// )
 const bankRepository = new BankRepositoryDatabase(databaseConnection)
 
 // const httpRestServer: HttpRestServer = new ExpressAdapter()
