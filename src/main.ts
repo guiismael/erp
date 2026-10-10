@@ -1,4 +1,5 @@
-import { BankRepositorySQL } from '@BankRepository.ts'
+import { BankDAODatabase } from '@BankDAO.ts'
+import { BankRepositoryDatabase } from '@BankRepositoryDatabase.ts'
 import { BankRestController, HttpRestServer } from '@BankRestController.ts'
 import { CreateBank } from '@CreateBank.ts'
 import { FastifyAdapter } from '@FastifyAdapter.ts'
@@ -9,13 +10,15 @@ import { RemoveBank } from '@RemoveBank.ts'
 import { UpdateBank } from '@UpdateBank.ts'
 
 // const databaseConnection = new MySQLAdapter(String(process.env.DATABASE_URL))
-// const databaseConnection = new SQLiteAdapter(
-//   String(process.env.DATABASE_FILENAME),
-// )
 const databaseConnection = new PostgreSQLAdapter(
   String(process.env.DATABASE_URL_PG),
 )
-const bankRepository = new BankRepositorySQL(databaseConnection)
+// const databaseConnection = new SQLiteAdapter(
+//   String(process.env.DATABASE_FILENAME),
+// )
+const bankDao = new BankDAODatabase(databaseConnection)
+// const bankRepository = new BankRepositorySQL(databaseConnection)
+const bankRepository = new BankRepositoryDatabase(bankDao)
 
 // const httpRestServer: HttpRestServer = new ExpressAdapter()
 const httpRestServer: HttpRestServer = new FastifyAdapter()
