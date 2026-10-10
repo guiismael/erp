@@ -1,4 +1,4 @@
-import { BankRepositoryDatabase } from '@BankRepository.ts'
+import { BankRepositorySQL } from '@BankRepository.ts'
 import { BankRestController, HttpRestServer } from '@BankRestController.ts'
 import { CreateBank } from '@CreateBank.ts'
 import { FastifyAdapter } from '@FastifyAdapter.ts'
@@ -15,7 +15,7 @@ import { UpdateBank } from '@UpdateBank.ts'
 const databaseConnection = new PostgreSQLAdapter(
   String(process.env.DATABASE_URL_PG),
 )
-const bankRepository = new BankRepositoryDatabase(databaseConnection)
+const bankRepository = new BankRepositorySQL(databaseConnection)
 
 // const httpRestServer: HttpRestServer = new ExpressAdapter()
 const httpRestServer: HttpRestServer = new FastifyAdapter()
