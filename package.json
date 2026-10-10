@@ -27,7 +27,8 @@
     "mysql2": "^3.23.1",
     "pg": "^8.22.0",
     "pg-promise": "^12.7.0",
-    "sqlite3": "^6.0.1"
+    "sqlite3": "^6.0.1",
+    "typeorm": "^1.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.3",

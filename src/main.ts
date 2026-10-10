@@ -17,7 +17,11 @@ const databaseConnection = new PostgreSQLAdapter(
 // const databaseConnection = new SQLiteAdapter(
 //   String(process.env.DATABASE_FILENAME),
 // )
+// const datasource = await typeormDatasourceFactory(
+//   String(process.env.DATABASE_URL_PG),
+// )
 const bankDao = new BankDAOSQL(databaseConnection)
+// const bankDao = new BankDAOTypeorm(datasource)
 // const bankRepository = new BankRepositorySQL(databaseConnection)
 const bankRepository = new BankRepositoryDatabase(bankDao)
 
@@ -45,6 +49,7 @@ const gracefulShutdown = async () => {
   try {
     await httpRestServer.close()
     await databaseConnection.close()
+    // await datasource.destroy()
     console.log('Application terminated.')
   } catch (error: any) {
     console.error(
