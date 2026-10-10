@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model BankPrismaPersistenceModel {
+  bankId Int    @id @default(autoincrement()) @map("bank_id")
+  name   String @map("name")
+  code   String @map("code")
+  url    String @map("url")
+
+  @@map("banks")
+}
