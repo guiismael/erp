@@ -1,4 +1,4 @@
-import { validateBankName } from '@validateBankName.ts'
+import { validateBankName } from '@domain/entities/validateBankName.ts'
 
 test.each([undefined, null, '', 'Test'])(
   "should be able to return false if name '%s' be invalid",

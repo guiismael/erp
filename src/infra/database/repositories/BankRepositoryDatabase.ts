@@ -1,7 +1,8 @@
-import { ApplicationError } from '@ApplicationError.ts'
-import { Bank } from '@Bank.ts'
-import { BankDAO } from '@BankDAO.ts'
-import { BankRepository } from '@BankRepository.ts'
+import { ApplicationError } from '@application/errors/ApplicationError.ts'
+import { BankRepository } from '@application/repositories/BankRepository.ts'
+import { Bank } from '@domain/entities/Bank.ts'
+
+import { BankDAO } from '../DAOs/BankDAO.ts'
 
 export class BankRepositoryDatabase implements BankRepository {
   constructor(private bankDao: BankDAO) {}

@@ -1,5 +1,6 @@
-import { BankRepository } from '@BankRepository.ts'
-import { UseCase } from '@UseCase.ts'
+import { BankRepository } from '@application/repositories/BankRepository.ts'
+
+import { UseCase } from './UseCase.ts'
 
 export class RemoveBank implements UseCase<
   RemoveBank.Input,

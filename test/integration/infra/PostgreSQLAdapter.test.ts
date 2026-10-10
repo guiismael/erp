@@ -1,5 +1,5 @@
-import { DatabaseConnection } from '@DatabaseConnection.ts'
-import { PostgreSQLAdapter } from '@PostgreSQLAdapter.ts'
+import { PostgreSQLAdapter } from '@external/database/PostgreSQLAdapter.ts'
+import { DatabaseConnection } from '@infra/database/DatabaseConnection.ts'
 
 let sut: DatabaseConnection
 
