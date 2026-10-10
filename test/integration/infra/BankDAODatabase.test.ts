@@ -1,5 +1,5 @@
 import { ApplicationError } from '@ApplicationError.ts'
-import { BankDAO, BankDAODatabase } from '@BankDAO.ts'
+import { BankDAO, BankDAOSQL } from '@BankDAO.ts'
 import { DatabaseConnection } from '@DatabaseConnection.ts'
 import { PostgreSQLAdapter } from '@PostgreSQLAdapter.ts'
 import Sinon from 'sinon'
@@ -9,7 +9,7 @@ let connection: DatabaseConnection
 
 beforeAll(() => {
   connection = new PostgreSQLAdapter(String(process.env.DATABASE_URL_PG))
-  sut = new BankDAODatabase(connection)
+  sut = new BankDAOSQL(connection)
 })
 
 afterAll(async () => {

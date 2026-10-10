@@ -1,4 +1,4 @@
-import { BankDAODatabase } from '@BankDAO.ts'
+import { BankDAOSQL } from '@BankDAO.ts'
 import { BankRepositoryDatabase } from '@BankRepositoryDatabase.ts'
 import { BankRestController, HttpRestServer } from '@BankRestController.ts'
 import { CreateBank } from '@CreateBank.ts'
@@ -16,7 +16,7 @@ const databaseConnection = new PostgreSQLAdapter(
 // const databaseConnection = new SQLiteAdapter(
 //   String(process.env.DATABASE_FILENAME),
 // )
-const bankDao = new BankDAODatabase(databaseConnection)
+const bankDao = new BankDAOSQL(databaseConnection)
 // const bankRepository = new BankRepositorySQL(databaseConnection)
 const bankRepository = new BankRepositoryDatabase(bankDao)
 
