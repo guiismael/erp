@@ -44,4 +44,8 @@ export class FastifyAdapter implements HttpRestServer {
       console.log(`Server running with fastify at http://localhost:${port}`)
     })
   }
+
+  async close(): Promise<void> {
+    await this.app?.close()
+  }
 }
