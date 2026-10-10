@@ -10,6 +10,7 @@ let httpClient: HttpClient
 
 beforeAll(() => {
   // connection = new MySQLAdapter(String(process.env.DATABASE_URL))
+  // connection = new SQLiteAdapter(String(process.env.DATABASE_FILENAME))
   connection = new PostgreSQLAdapter(String(process.env.DATABASE_URL_PG))
   httpClient = new FetchAdapter()
 })

@@ -19,6 +19,6 @@ export class PostgreSQLAdapter implements DatabaseConnection {
 
   private normalizeStatement(statement: string): string {
     let index = 0
-    return statement.toLocaleLowerCase().replace(/\?/gi, () => `$${++index}`)
+    return statement.toLowerCase().replace(/\?/gi, () => `$${++index}`)
   }
 }

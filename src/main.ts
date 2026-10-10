@@ -9,6 +9,9 @@ import { RemoveBank } from '@RemoveBank.ts'
 import { UpdateBank } from '@UpdateBank.ts'
 
 // const databaseConnection = new MySQLAdapter(String(process.env.DATABASE_URL))
+// const databaseConnection = new SQLiteAdapter(
+//   String(process.env.DATABASE_FILENAME),
+// )
 const databaseConnection = new PostgreSQLAdapter(
   String(process.env.DATABASE_URL_PG),
 )

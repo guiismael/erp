@@ -2,7 +2,7 @@ import type { Knex } from 'knex'
 
 export default {
   client: 'pg',
-  connection: process.env.DATABASE_URL_PG,
+  connection: String(process.env.DATABASE_URL_PG),
   migrations: {
     directory: './src/infra/database/migrations',
   },
