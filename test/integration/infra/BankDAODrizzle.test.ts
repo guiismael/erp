@@ -52,7 +52,7 @@ test('should be able to test bank access', async () => {
 
 test('should be able to return a bank by code', async () => {
   const fakeCode = `${Math.random()}`.substring(2, 5)
-  await connection.query(`DELETE FROM banks WHERE code = ? `, [fakeCode])
+  await sut.removeByCode(fakeCode)
   const bankId = await sut.save({
     code: fakeCode,
     name: 'Test Bank',

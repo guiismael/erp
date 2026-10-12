@@ -47,7 +47,7 @@ test('should be able to test bank access', async () => {
 
 test('should be able to return a bank by code', async () => {
   const fakeCode = `${Math.random()}`.substring(2, 5)
-  await connection.query(`DELETE FROM banks WHERE code = ? `, [fakeCode])
+  await sut.removeByCode(fakeCode)
   const bankId = await sut.save({
     code: fakeCode,
     name: 'Test Bank',
@@ -90,4 +90,30 @@ test('should be able to thrown an error if bank id isnt a number on bank remove'
   await expect(sut.remove('asd' as any)).rejects.toThrow(
     new ApplicationError('Invalid bank id.'),
   )
+})
+
+test('should be able to remove a bank by code', async () => {
+  const fakeCode = `${Math.random()}`.substring(2, 5)
+  const fakeName = `Name ${Math.random()}`
+  await sut.save({
+    code: fakeCode,
+    name: fakeName,
+    url: 'url.com',
+  })
+  await sut.removeByCode(fakeCode)
+  const savedBank = await sut.getByCode(fakeCode)
+  expect(savedBank).toBeFalsy()
+})
+
+test('should be able to remove a bank by name', async () => {
+  const fakeCode = `${Math.random()}`.substring(2, 5)
+  const fakeName = `Name ${Math.random()}`
+  await sut.save({
+    code: fakeCode,
+    name: fakeName,
+    url: 'url.com',
+  })
+  await sut.removeByName(fakeName)
+  const savedBank = await sut.getByName(fakeName)
+  expect(savedBank).toBeFalsy()
 })

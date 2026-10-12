@@ -1,33 +1,46 @@
+import { mongoDatasourceFactory } from '@external/database/DAOs/mongo/factory.ts'
 import { PostgreSQLAdapter } from '@external/database/PostgreSQLAdapter.ts'
 import { FetchAdapter } from '@external/http/FetchAdapter.ts'
+import { BankDAO } from '@infra/database/DAOs/BankDAO.ts'
+import { BankDAOSQL } from '@infra/database/DAOs/BankDAOSQL.ts'
 import { DatabaseConnection } from '@infra/database/DatabaseConnection.ts'
 import { HttpClient } from '@infra/http/HttpClient.ts'
 import { HttpRestServer } from '@infra/http/HttpRestServer.ts'
+import { MongoClient } from 'mongodb'
 
 const baseUrl = 'http://localhost:3000'
-let connection: DatabaseConnection
 let httpClient: HttpClient
+let connection: DatabaseConnection
+let dataSource: MongoClient
+let bankDao: BankDAO
 
-beforeAll(() => {
-  // connection = new MySQLAdapter(String(process.env.DATABASE_URL))
-  // connection = new SQLiteAdapter(String(process.env.DATABASE_FILENAME))
-  connection = new PostgreSQLAdapter(String(process.env.DATABASE_URL_PG))
+beforeAll(async () => {
   httpClient = new FetchAdapter()
+  // connection = new MySQLAdapter(String(process.env.DATABASE_URL))
+  connection = new PostgreSQLAdapter(String(process.env.DATABASE_URL_PG))
+  // connection = new SQLiteAdapter(String(process.env.DATABASE_FILENAME))
+  dataSource = await mongoDatasourceFactory(
+    String(process.env.DATABASE_URL_MONGO),
+  )
+  bankDao = new BankDAOSQL(connection)
+  // bankDao = new BankDAOMongo(dataSource)
 })
 
 afterAll(async () => {
   await connection.close()
+  await dataSource.close()
 })
 
 test('should be able to return a bank list (GET /banks)', async () => {
-  const bankCode = '135'
-  await connection.query(`DELETE FROM banks WHERE code = ?;`, [bankCode])
+  const bankCode = `${Math.random()}`.substring(2, 5)
+  await bankDao.removeByCode(bankCode)
   const inputCreate = {
     code: bankCode,
     name: `Test List ${Math.random()}`,
     url: 'test-list.com',
   }
   const responseCreate = await httpClient.post(`${baseUrl}/banks`, inputCreate)
+  expect(responseCreate.statusCode).toBe(HttpRestServer.StatusCode.Created)
   const outputCreate = responseCreate.body
   const bankId = outputCreate.id
   const response = await httpClient.get(`${baseUrl}/banks`)
@@ -45,9 +58,10 @@ test('should be able to return a bank list (GET /banks)', async () => {
 })
 
 test('should be able to return a bank (GET /banks/:id)', async () => {
-  await connection.query(`DELETE FROM banks WHERE code = ?;`, ['234'])
+  const bankCode = `${Math.random()}`.substring(2, 5)
+  await bankDao.removeByCode(bankCode)
   const inputCreate = {
-    code: '234',
+    code: bankCode,
     name: 'Test Get One',
     url: 'test-get-one.com',
   }
@@ -65,9 +79,10 @@ test('should be able to return a bank (GET /banks/:id)', async () => {
 })
 
 test('should be able to create a bank (POST /banks)', async () => {
-  await connection.query(`DELETE FROM banks WHERE code = ?;`, ['345'])
+  const bankCode = `${Math.random()}`.substring(2, 5)
+  await bankDao.removeByCode(bankCode)
   const inputCreate = {
-    code: '345',
+    code: bankCode,
     name: `Test Name ${Math.random()}`,
     url: 'test-create.com',
   }
@@ -90,11 +105,13 @@ test('should be able to create a bank (POST /banks)', async () => {
 })
 
 test('should be able to alter a bank (PUT /banks/:id)', async () => {
-  const bankCode = '456'
-  await connection.query(`DELETE FROM banks WHERE code = ?`, [bankCode])
+  const bankCode = `${Math.random()}`.substring(2, 5)
+  const bankName = `Bank ${Math.random()}`
+  await bankDao.removeByCode(bankCode)
+  await bankDao.removeByName(bankCode)
   const inputCreate = {
     code: bankCode,
-    name: 'Test Name',
+    name: bankName,
     url: 'teste-name-changed.com',
   }
   const responseCreate = await httpClient.post(`${baseUrl}/banks`, inputCreate)
@@ -128,9 +145,10 @@ test('should be able to alter a bank (PUT /banks/:id)', async () => {
 })
 
 test('should be able to delete a bank (DELETE /banks/:id)', async () => {
-  await connection.query(`DELETE FROM banks WHERE code = ?;`, ['567'])
+  const bankCode = `${Math.random()}`.substring(2, 5)
+  await bankDao.removeByCode(bankCode)
   const inputCreate = {
-    code: '567',
+    code: bankCode,
     name: 'Test Delete',
     url: 'teste-delete.com',
   }

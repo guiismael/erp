@@ -1,37 +1,48 @@
+import { mongoDatasourceFactory } from '@external/database/DAOs/mongo/factory.ts'
 import { PostgreSQLAdapter } from '@external/database/PostgreSQLAdapter.ts'
 import { FetchAdapter } from '@external/http/FetchAdapter.ts'
+import { BankDAO } from '@infra/database/DAOs/BankDAO.ts'
+import { BankDAOSQL } from '@infra/database/DAOs/BankDAOSQL.ts'
 import { DatabaseConnection } from '@infra/database/DatabaseConnection.ts'
 import { HttpClient } from '@infra/http/HttpClient.ts'
 import { HttpRestServer } from '@infra/http/HttpRestServer.ts'
+import { MongoClient } from 'mongodb'
 
 const baseUrl = 'http://localhost:3000'
-let connection: DatabaseConnection
 let httpClient: HttpClient
+let connection: DatabaseConnection
+let dataSource: MongoClient
+let bankDao: BankDAO
 
-beforeAll(() => {
-  // connection = new MySQLAdapter(String(process.env.DATABASE_URL))
-  // connection = new SQLiteAdapter(String(process.env.DATABASE_FILENAME))
-  connection = new PostgreSQLAdapter(String(process.env.DATABASE_URL_PG))
+beforeAll(async () => {
   httpClient = new FetchAdapter()
+  // connection = new MySQLAdapter(String(process.env.DATABASE_URL))
+  connection = new PostgreSQLAdapter(String(process.env.DATABASE_URL_PG))
+  // connection = new SQLiteAdapter(String(process.env.DATABASE_FILENAME))
+  dataSource = await mongoDatasourceFactory(
+    String(process.env.DATABASE_URL_MONGO),
+  )
+  bankDao = new BankDAOSQL(connection)
+  // bankDao = new BankDAOMongo(dataSource)
 })
 
 afterAll(async () => {
   await connection.close()
+  await dataSource.close()
 })
 
 test('should be able to return a bank list (GET /banks)', async () => {
   const fakeCode = `${Math.random()}`.substring(2, 5)
   const fakeName = `Name ${Math.random()}`
-  await connection.query(`DELETE FROM banks WHERE code = ? OR name = ?`, [
-    fakeCode,
-    fakeName,
-  ])
+  await bankDao.removeByCode(fakeCode)
+  await bankDao.removeByName(fakeName)
   const inputCreate = {
     code: fakeCode,
     name: fakeName,
     url: 'test.com',
   }
   const responseCreate = await httpClient.post(`${baseUrl}/banks`, inputCreate)
+  expect(responseCreate.statusCode).toBe(HttpRestServer.StatusCode.Created)
   const outputCreate = responseCreate.body
   const bankId = outputCreate.id
   const response = await httpClient.get(`${baseUrl}/banks`)
@@ -51,10 +62,8 @@ test('should be able to return a bank list (GET /banks)', async () => {
 test('should be able to return a bank (GET /banks/:id)', async () => {
   const fakeCode = `${Math.random()}`.substring(2, 5)
   const fakeName = `Name ${Math.random()}`
-  await connection.query(`DELETE FROM banks WHERE code = ? OR name = ?`, [
-    fakeCode,
-    fakeName,
-  ])
+  await bankDao.removeByCode(fakeCode)
+  await bankDao.removeByName(fakeName)
   const inputCreate = {
     code: fakeCode,
     name: fakeName,
@@ -76,10 +85,8 @@ test('should be able to return a bank (GET /banks/:id)', async () => {
 test('should be able to create a bank (POST /banks)', async () => {
   const fakeCode = `${Math.random()}`.substring(3, 6)
   const fakeName = `Name ${Math.random()}`
-  await connection.query(`DELETE FROM banks WHERE code = ? OR name = ?`, [
-    fakeCode,
-    fakeName,
-  ])
+  await bankDao.removeByCode(fakeCode)
+  await bankDao.removeByName(fakeName)
   const inputCreate = {
     code: fakeCode,
     name: fakeName,
@@ -148,10 +155,8 @@ test.each(['ABC'])(
 test('should be able to alter a bank (PUT /banks/:id)', async () => {
   const fakeCode = `${Math.random()}`.substring(2, 5)
   const fakeName = `Name ${Math.random()}`
-  await connection.query(`DELETE FROM banks WHERE code = ? OR name = ?`, [
-    fakeCode,
-    fakeName,
-  ])
+  await bankDao.removeByCode(fakeCode)
+  await bankDao.removeByName(fakeName)
   const inputCreate = {
     code: fakeCode,
     name: fakeName,
@@ -162,10 +167,8 @@ test('should be able to alter a bank (PUT /banks/:id)', async () => {
   const bankId = outputCreate.id
   const fakeCodeUpdated = `${Math.random()}`.substring(2, 5)
   const fakeNameUpdated = `Name ${Math.random()} changed`
-  await connection.query(`DELETE FROM banks WHERE code = ? OR name = ?`, [
-    fakeCodeUpdated,
-    fakeNameUpdated,
-  ])
+  await bankDao.removeByCode(fakeCodeUpdated)
+  await bankDao.removeByName(fakeNameUpdated)
   const inputUpdate = {
     code: fakeCodeUpdated,
     name: fakeNameUpdated,
@@ -197,10 +200,9 @@ test.each(['Test'])(
   async (invalidName: any) => {
     const fakeCode = `${Math.random()}`.substring(2, 5)
     const fakeName = `Name ${Math.random()}`
-    await connection.query(
-      `DELETE FROM banks WHERE code = ? OR name = ? OR name = ?`,
-      [fakeCode, fakeName, invalidName],
-    )
+    await bankDao.removeByCode(fakeCode)
+    await bankDao.removeByName(fakeName)
+    await bankDao.removeByName(invalidName)
     const inputCreate = {
       code: fakeCode,
       name: fakeName,
@@ -236,10 +238,8 @@ test.each(['Test'])(
   async (invalidCode: any) => {
     const fakeCode = `${Math.random()}`.substring(2, 5)
     const fakeName = `Test Name ${Math.random()}`
-    await connection.query(`DELETE FROM banks WHERE code = ? or name = ?;`, [
-      fakeCode,
-      fakeName,
-    ])
+    await bankDao.removeByCode(fakeCode)
+    await bankDao.removeByName(fakeName)
     const inputCreate = {
       code: fakeCode,
       name: fakeName,
@@ -299,10 +299,8 @@ test('should not be able to delete a bank with invalid id (DELETE /banks/:invali
 test('should be able to delete a bank (DELETE /banks/:id)', async () => {
   const fakeCode = `${Math.random()}`.substring(2, 5)
   const fakeName = `Name ${Math.random()}`
-  await connection.query(`DELETE FROM banks WHERE code = ? OR name = ?`, [
-    fakeCode,
-    fakeName,
-  ])
+  await bankDao.removeByCode(fakeCode)
+  await bankDao.removeByName(fakeName)
   const inputCreate = {
     code: fakeCode,
     name: fakeName,

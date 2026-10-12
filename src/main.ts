@@ -26,10 +26,14 @@ const databaseConnection = new PostgreSQLAdapter(
 // const datasource = await drizzleDatasourceFactory(
 //   String(process.env.DATABASE_URL_PG),
 // )
+// const datasource = await mongoDatasourceFactory(
+//   String(process.env.DATABASE_URL_MONGO),
+// )
 const bankDao = new BankDAOSQL(databaseConnection)
 // const bankDao = new BankDAOTypeorm(datasource)
 // const bankDao = new BankDAOPrisma(datasource)
 // const bankDao = new BankDAODrizzle(datasource)
+// const bankDao = new BankDAOMongo(datasource)
 // const bankRepository = new BankRepositorySQL(databaseConnection)
 const bankRepository = new BankRepositoryDatabase(bankDao)
 
@@ -57,9 +61,10 @@ const gracefulShutdown = async () => {
   try {
     await httpRestServer.close()
     await databaseConnection.close()
-    // await datasource.destroy()
-    // await datasource.$disconnect()
-    // await datasource.$client.end()
+    // await datasource?.destroy()
+    // await datasource?.$disconnect()
+    // await datasource?.$client.end()
+    // await datasource?.close()
     console.log('Application terminated.')
   } catch (error: any) {
     console.error(
