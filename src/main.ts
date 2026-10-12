@@ -39,6 +39,7 @@ const bankRepository = new BankRepositoryDatabase(bankDao)
 
 // const httpRestServer: HttpRestServer = new ExpressAdapter()
 const httpRestServer: HttpRestServer = new FastifyAdapter()
+// const httpRestServer: HttpRestServer = new HonoAdapter()
 const getBankList = new GetBankList(bankRepository)
 const getBankById = new GetBankById(bankRepository)
 const createBank = new CreateBank(bankRepository)
