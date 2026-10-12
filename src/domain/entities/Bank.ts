@@ -1,17 +1,17 @@
-import { DomainError } from '@domain/errors/DomainError.ts'
-
-import { validateBankCode } from './validateBankCode.ts'
-import { validateBankName } from './validateBankName.ts'
+import { BankCode } from './BankCode.ts'
+import { BankName } from './BankName.ts'
 
 export class Bank {
+  private code: BankCode
+  private name: BankName
   private constructor(
     private bankId: number,
-    private name: string,
-    private code: string,
+    name: string,
+    code: string,
     private url: string,
   ) {
-    if (!validateBankName(name)) throw new DomainError('Invalid name.')
-    if (!validateBankCode(code)) throw new DomainError('Invalid code.')
+    this.code = new BankCode(code)
+    this.name = new BankName(name)
   }
 
   static create({ code, name, url }: Bank.CreateParams): Bank {
@@ -27,25 +27,23 @@ export class Bank {
   }
 
   getName() {
-    return this.name
+    return this.name.getValue()
   }
 
   getCode() {
-    return this.code
+    return this.code.getValue()
   }
 
   getUrl() {
     return this.url
   }
 
-  changeName(name: string) {
-    if (!validateBankName(name)) throw new DomainError('Invalid name.')
-    this.name = name
+  changeCode(code: string) {
+    this.code = new BankCode(code)
   }
 
-  changeCode(code: string) {
-    if (!validateBankCode(code)) throw new DomainError('Invalid code.')
-    this.code = code
+  changeName(name: string) {
+    this.name = new BankName(name)
   }
 
   setUrl(url: string) {
