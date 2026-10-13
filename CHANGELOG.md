@@ -1,3 +1,10 @@
+## [0.11.0](https://github.com/guiismael/erp/compare/v0.10.0...v0.11.0) (2026-10-13)
+
+
+### Features
+
+* add queue implementation with mediator in memory ([60e0970](https://github.com/guiismael/erp/commit/60e09709da3a05904073f5df9c7908ce0583947c))
+
 ## [0.10.0](https://github.com/guiismael/erp/compare/v0.9.0...v0.10.0) (2026-10-13)
 
 
@@ -25,11 +32,4 @@
 ### Bug Fixes
 
 * add error handling to fastify adapter ([013a592](https://github.com/guiismael/erp/commit/013a592c280d3d489a48ba21863fc98f3dad593d))
-
-## [0.7.0](https://github.com/guiismael/erp/compare/v0.6.15...v0.7.0) (2026-10-13)
-
-
-### Features
-
-* ensure that `Bank` register and event on be updated ([7b1c614](https://github.com/guiismael/erp/commit/7b1c614fe471a403e955ae4350932a71cd0269c5))
 
