@@ -1,3 +1,4 @@
+import { EventPublisher } from '@application/EventPublisher.ts'
 import { CreateBank } from '@application/usecases/CreateBank.ts'
 import { GetBankById } from '@application/usecases/GetBankById.ts'
 import { GetBankList } from '@application/usecases/GetBankList.ts'
@@ -17,6 +18,9 @@ const databaseConnection = new PostgreSQLAdapter(
 // const databaseConnection = new SQLiteAdapter(
 //   String(process.env.DATABASE_FILENAME),
 // )
+const eventPublisher: EventPublisher = {
+  async publishAll() {},
+}
 // const datasource = await typeormDatasourceFactory(
 //   String(process.env.DATABASE_URL_PG),
 // )
@@ -43,7 +47,7 @@ const httpRestServer: HttpRestServer = new FastifyAdapter()
 const getBankList = new GetBankList(bankRepository)
 const getBankById = new GetBankById(bankRepository)
 const createBank = new CreateBank(bankRepository)
-const updateBank = new UpdateBank(bankRepository)
+const updateBank = new UpdateBank(bankRepository, eventPublisher)
 const removeBank = new RemoveBank(bankRepository)
 new BankRestController(
   httpRestServer,

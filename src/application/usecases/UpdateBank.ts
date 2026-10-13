@@ -1,5 +1,6 @@
 import { ApplicationError } from '@application/errors/ApplicationError.ts'
 import { NotFoundError } from '@application/errors/NotFoundError.ts'
+import { EventPublisher } from '@application/EventPublisher.ts'
 import { BankRepository } from '@application/repositories/BankRepository.ts'
 
 import { UseCase } from './UseCase.ts'
@@ -8,7 +9,10 @@ export class UpdateBank implements UseCase<
   UpdateBank.Input,
   UpdateBank.Output
 > {
-  constructor(private bankRepository: BankRepository) {}
+  constructor(
+    private bankRepository: BankRepository,
+    private eventPublisher: EventPublisher,
+  ) {}
 
   async execute(input: UpdateBank.Input): Promise<UpdateBank.Output> {
     const bank = await this.bankRepository.findById(input.id)
@@ -31,6 +35,8 @@ export class UpdateBank implements UseCase<
     }
     bank.setUrl(input.url)
     await this.bankRepository.update(bank)
+    const bankEvents = bank.getDomainEvents()
+    await this.eventPublisher.publishAll(bankEvents)
     return {
       id: bank.getBankId(),
       code: bank.getCode(),

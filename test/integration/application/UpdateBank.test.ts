@@ -1,17 +1,23 @@
 import { ApplicationError } from '@application/errors/ApplicationError.ts'
 import { NotFoundError } from '@application/errors/NotFoundError.ts'
+import { EventPublisher } from '@application/EventPublisher.ts'
 import { BankRepository } from '@application/repositories/BankRepository.ts'
 import { UpdateBank } from '@application/usecases/UpdateBank.ts'
 import { Bank } from '@domain/entities/Bank.ts'
+import { BankInfoUpdatedEvent } from '@domain/events/BankInfoUpdatedEvent.ts'
+import Sinon from 'sinon'
 
 import { BankRepositoryFake } from '../../mocks/BankRepositoryFake.ts'
 
 let bankRepository: BankRepository
+const eventPublisher: EventPublisher = {
+  async publishAll() {},
+}
 let sut: UpdateBank
 
-beforeAll(() => {
+beforeEach(() => {
   bankRepository = new BankRepositoryFake()
-  sut = new UpdateBank(bankRepository)
+  sut = new UpdateBank(bankRepository, eventPublisher)
 })
 
 test('should not be able to updated an inexistent bank', async () => {
@@ -51,6 +57,29 @@ test('should be able to alter a bank data', async () => {
   expect(bankUpdated?.getCode()).toBe(inputUpdate.code)
   expect(bankUpdated?.getName()).toBe(inputUpdate.name)
   expect(bankUpdated?.getUrl()).toBe(inputUpdate.url)
+  await bankRepository.remove(bankId)
+})
+
+test('should be able to publish an event on update bank data', async () => {
+  const bank = Bank.create({
+    code: '123',
+    name: 'Any name',
+    url: 'url.com',
+  })
+  const bankSaved = await bankRepository.save(bank)
+  const bankId = bankSaved.getBankId()
+  const inputUpdate = {
+    id: bankId,
+    code: '321',
+    name: 'Test Name Changed',
+    url: 'teste.changed.com',
+  }
+  const publishAllSpy = Sinon.spy(eventPublisher, 'publishAll')
+  await sut.execute(inputUpdate)
+  expect(publishAllSpy.calledOnce).toBeTruthy()
+  expect(
+    publishAllSpy.calledWith([Sinon.match.instanceOf(BankInfoUpdatedEvent)]),
+  ).toBeTruthy()
   await bankRepository.remove(bankId)
 })
 
