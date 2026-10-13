@@ -1,3 +1,10 @@
+## [0.8.0](https://github.com/guiismael/erp/compare/v0.7.1...v0.8.0) (2026-10-13)
+
+
+### Features
+
+* publish event on bank created ([468378c](https://github.com/guiismael/erp/commit/468378c525d1dd708c0d11297f3d0d422018185e))
+
 ## [0.7.1](https://github.com/guiismael/erp/compare/v0.7.0...v0.7.1) (2026-10-13)
 
 
@@ -15,6 +22,4 @@
 ## [0.6.15](https://github.com/guiismael/erp/compare/v0.6.14...v0.6.15) (2026-10-12)
 
 ## [0.6.14](https://github.com/guiismael/erp/compare/v0.6.13...v0.6.14) (2026-10-12)
-
-## [0.6.13](https://github.com/guiismael/erp/compare/v0.6.12...v0.6.13) (2026-10-11)
 
