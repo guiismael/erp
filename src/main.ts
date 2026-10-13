@@ -1,4 +1,3 @@
-import { EventPublisher } from '@application/EventPublisher.ts'
 import { CreateBank } from '@application/usecases/CreateBank.ts'
 import { GetBankById } from '@application/usecases/GetBankById.ts'
 import { GetBankList } from '@application/usecases/GetBankList.ts'
@@ -6,10 +5,13 @@ import { RemoveBank } from '@application/usecases/RemoveBank.ts'
 import { UpdateBank } from '@application/usecases/UpdateBank.ts'
 import { PostgreSQLAdapter } from '@external/database/PostgreSQLAdapter.ts'
 import { FastifyAdapter } from '@external/http/FastifyAdapter.ts'
+import { BankEventQueueController } from '@infra/controllers/BankEventQueueController.ts'
 import { BankRestController } from '@infra/controllers/BankRestController.ts'
 import { BankDAOSQL } from '@infra/database/DAOs/BankDAOSQL.ts'
 import { BankRepositoryDatabase } from '@infra/database/repositories/BankRepositoryDatabase.ts'
+import { EventPublisherQueue } from '@infra/EventPublisherQueue.ts'
 import { HttpRestServer } from '@infra/http/HttpRestServer.ts'
+import { Queue } from '@infra/Queue.ts'
 
 // const databaseConnection = new MySQLAdapter(String(process.env.DATABASE_URL))
 const databaseConnection = new PostgreSQLAdapter(
@@ -18,9 +20,11 @@ const databaseConnection = new PostgreSQLAdapter(
 // const databaseConnection = new SQLiteAdapter(
 //   String(process.env.DATABASE_FILENAME),
 // )
-const eventPublisher: EventPublisher = {
-  async publishAll() {},
+const queue: Queue = {
+  async publish() {},
+  async consume() {},
 }
+const eventPublisher = new EventPublisherQueue(queue)
 // const datasource = await typeormDatasourceFactory(
 //   String(process.env.DATABASE_URL_PG),
 // )
@@ -58,6 +62,8 @@ new BankRestController(
   removeBank,
 )
 httpRestServer.listen(3000)
+
+new BankEventQueueController(queue)
 
 let shuttingDown = false
 const gracefulShutdown = async () => {
