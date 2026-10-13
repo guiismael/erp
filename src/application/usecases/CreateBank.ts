@@ -1,4 +1,6 @@
 import { ApplicationError } from '@application/errors/ApplicationError.ts'
+import { EventPublisher } from '@application/EventPublisher.ts'
+import { BankCreatedEvent } from '@application/events/BankCreatedEvent.ts'
 import { BankRepository } from '@application/repositories/BankRepository.ts'
 import { Bank } from '@domain/entities/Bank.ts'
 
@@ -8,7 +10,10 @@ export class CreateBank implements UseCase<
   CreateBank.Input,
   CreateBank.Output
 > {
-  constructor(private bankRepository: BankRepository) {}
+  constructor(
+    private bankRepository: BankRepository,
+    private eventPublisher: EventPublisher,
+  ) {}
 
   async execute(input: CreateBank.Input): Promise<CreateBank.Output> {
     const bank = Bank.create({
@@ -27,6 +32,10 @@ export class CreateBank implements UseCase<
     if (alreadyExistsWithName)
       throw new ApplicationError('A bank with this name already exists.')
     const savedBank = await this.bankRepository.save(bank)
+    const applicationEvent = new BankCreatedEvent({
+      bankId: savedBank.getBankId(),
+    })
+    await this.eventPublisher.publishAll([applicationEvent])
     const output = {
       id: savedBank.getBankId(),
       code: savedBank.getCode(),

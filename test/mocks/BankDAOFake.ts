@@ -27,6 +27,14 @@ export class BankDAOFake implements BankDAO {
     )
   }
 
+  async removeByCode(code: string): Promise<void> {
+    this.bankList = this.bankList.filter((bankData) => bankData.code !== code)
+  }
+
+  async removeByName(name: string): Promise<void> {
+    this.bankList = this.bankList.filter((bankData) => bankData.name !== name)
+  }
+
   async getById(bankId: number): Promise<BankDAO.BankDTO | undefined> {
     return this.bankList.find((bankData) => bankData.bank_id === bankId)
   }

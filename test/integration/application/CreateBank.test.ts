@@ -1,7 +1,10 @@
 import { ApplicationError } from '@application/errors/ApplicationError.ts'
+import { EventPublisher } from '@application/EventPublisher.ts'
+import { BankCreatedEvent } from '@application/events/BankCreatedEvent.ts'
 import { BankRepository } from '@application/repositories/BankRepository.ts'
 import { CreateBank } from '@application/usecases/CreateBank.ts'
 import { BankDAO } from '@infra/database/DAOs/BankDAO.ts'
+import Sinon from 'sinon'
 
 import { BankDAOFake } from '../../mocks/BankDAOFake.ts'
 import { BankRepositoryFake } from '../../mocks/BankRepositoryFake.ts'
@@ -9,11 +12,14 @@ import { BankRepositoryFake } from '../../mocks/BankRepositoryFake.ts'
 let bankDao: BankDAO
 let bankRepository: BankRepository
 let sut: CreateBank
+const eventPublisher: EventPublisher = {
+  async publishAll() {},
+}
 
 beforeEach(() => {
   bankDao = new BankDAOFake()
   bankRepository = new BankRepositoryFake()
-  sut = new CreateBank(bankRepository)
+  sut = new CreateBank(bankRepository, eventPublisher)
 })
 
 test('should be able to create a bank', async () => {
@@ -34,6 +40,22 @@ test('should be able to create a bank', async () => {
   expect(bank?.getName()).toBe(inputSut.name)
   expect(bank?.getUrl()).toBe(inputSut.url)
   await bankRepository.remove(outputCreate.id)
+})
+
+test('should call `eventPublisher.publishAll()` correctly', async () => {
+  const fakeCode = `${Math.random()}`.substring(2, 5)
+  const fakeName = `Bank ${Math.random()}`
+  const inputSut = {
+    code: fakeCode,
+    name: fakeName,
+    url: 'url.com',
+  }
+  const publishAllSpy = Sinon.spy(eventPublisher, 'publishAll')
+  await sut.execute(inputSut)
+  expect(publishAllSpy.calledOnce).toBeTruthy()
+  expect(
+    publishAllSpy.calledWith([Sinon.match.instanceOf(BankCreatedEvent)]),
+  ).toBeTruthy()
 })
 
 test('should not be able to create a bank with invalid name', async () => {
