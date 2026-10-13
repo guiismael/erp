@@ -10,7 +10,12 @@ import Sinon from 'sinon'
 const httpRestServer: HttpRestServer = {
   listen() {},
   register() {},
+  async close() {},
 }
+
+afterEach(() => {
+  Sinon.restore()
+})
 
 test('should be able to call httpRestServer correctly', () => {
   const registerSpy = Sinon.spy(httpRestServer, 'register')

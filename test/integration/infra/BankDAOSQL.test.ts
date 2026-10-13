@@ -17,6 +17,10 @@ afterAll(async () => {
   await connection.close()
 })
 
+afterEach(() => {
+  Sinon.restore()
+})
+
 test('should be able to test bank access', async () => {
   const bankId = await sut.save({
     code: '123',

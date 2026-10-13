@@ -20,6 +20,10 @@ beforeEach(() => {
   sut = new UpdateBank(bankRepository, eventPublisher)
 })
 
+afterEach(() => {
+  Sinon.restore()
+})
+
 test('should not be able to updated an inexistent bank', async () => {
   const inputUpdate = {
     id: 9_999_999,

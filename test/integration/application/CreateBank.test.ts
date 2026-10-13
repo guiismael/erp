@@ -22,6 +22,10 @@ beforeEach(() => {
   sut = new CreateBank(bankRepository, eventPublisher)
 })
 
+afterEach(() => {
+  Sinon.restore()
+})
+
 test('should be able to create a bank', async () => {
   const fakeCode = `${Math.random()}`.substring(2, 5)
   const inputSut = {
