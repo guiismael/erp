@@ -1,3 +1,10 @@
+## [0.10.0](https://github.com/guiismael/erp/compare/v0.9.0...v0.10.0) (2026-10-13)
+
+
+### Features
+
+* add controller to events queue ([6ec2026](https://github.com/guiismael/erp/commit/6ec2026c61f1f963364e386308e507f2cee563b0))
+
 ## [0.9.0](https://github.com/guiismael/erp/compare/v0.8.0...v0.9.0) (2026-10-13)
 
 
@@ -25,6 +32,4 @@
 ### Features
 
 * ensure that `Bank` register and event on be updated ([7b1c614](https://github.com/guiismael/erp/commit/7b1c614fe471a403e955ae4350932a71cd0269c5))
-
-## [0.6.15](https://github.com/guiismael/erp/compare/v0.6.14...v0.6.15) (2026-10-12)
 
