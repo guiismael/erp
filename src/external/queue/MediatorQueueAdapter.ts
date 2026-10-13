@@ -17,6 +17,10 @@ export class MediatorQueueAdapter implements Queue {
     }
     this.handlers.push(handler)
   }
+
+  async connect(): Promise<void> {}
+
+  async disconnect(): Promise<void> {}
 }
 
 export namespace MediatorQueueAdapter {

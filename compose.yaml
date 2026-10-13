@@ -3,8 +3,9 @@ services:
     image: mariadb:12.3.2
     restart: on-failure
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: yes
       MYSQL_DATABASE: erp-refatorado
+      MYSQL_ROOT_PASSWORD: root
+    # MYSQL_ALLOW_EMPTY_PASSWORD: yes
     command:
       - --character-set-server=utf8mb3
       - --collation-server=utf8mb3_general_ci
@@ -86,6 +87,18 @@ services:
         condition: service_healthy
       db_mongo:
         condition: service_healthy
+
+  rabbit:
+    image: rabbitmq:3-management
+    restart: on-failure
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "status"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
 
   # dbgate:
   #   image: dbgate/dbgate:7.3.1
