@@ -5,13 +5,13 @@ import { RemoveBank } from '@application/usecases/RemoveBank.ts'
 import { UpdateBank } from '@application/usecases/UpdateBank.ts'
 import { PostgreSQLAdapter } from '@external/database/PostgreSQLAdapter.ts'
 import { FastifyAdapter } from '@external/http/FastifyAdapter.ts'
+import { MediatorQueueAdapter } from '@external/queue/MediatorQueueAdapter.ts'
 import { BankEventQueueController } from '@infra/controllers/BankEventQueueController.ts'
 import { BankRestController } from '@infra/controllers/BankRestController.ts'
 import { BankDAOSQL } from '@infra/database/DAOs/BankDAOSQL.ts'
 import { BankRepositoryDatabase } from '@infra/database/repositories/BankRepositoryDatabase.ts'
 import { EventPublisherQueue } from '@infra/EventPublisherQueue.ts'
 import { HttpRestServer } from '@infra/http/HttpRestServer.ts'
-import { Queue } from '@infra/Queue.ts'
 
 // const databaseConnection = new MySQLAdapter(String(process.env.DATABASE_URL))
 const databaseConnection = new PostgreSQLAdapter(
@@ -20,10 +20,7 @@ const databaseConnection = new PostgreSQLAdapter(
 // const databaseConnection = new SQLiteAdapter(
 //   String(process.env.DATABASE_FILENAME),
 // )
-const queue: Queue = {
-  async publish() {},
-  async consume() {},
-}
+const queue = new MediatorQueueAdapter()
 const eventPublisher = new EventPublisherQueue(queue)
 // const datasource = await typeormDatasourceFactory(
 //   String(process.env.DATABASE_URL_PG),
