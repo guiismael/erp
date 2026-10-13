@@ -1,3 +1,5 @@
+## [0.11.1](https://github.com/guiismael/erp/compare/v0.11.0...v0.11.1) (2026-10-13)
+
 ## [0.11.0](https://github.com/guiismael/erp/compare/v0.10.0...v0.11.0) (2026-10-13)
 
 
@@ -25,11 +27,4 @@
 ### Features
 
 * publish event on bank created ([468378c](https://github.com/guiismael/erp/commit/468378c525d1dd708c0d11297f3d0d422018185e))
-
-## [0.7.1](https://github.com/guiismael/erp/compare/v0.7.0...v0.7.1) (2026-10-13)
-
-
-### Bug Fixes
-
-* add error handling to fastify adapter ([013a592](https://github.com/guiismael/erp/commit/013a592c280d3d489a48ba21863fc98f3dad593d))
 
