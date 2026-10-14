@@ -1,3 +1,5 @@
+## [0.11.2](https://github.com/guiismael/erp/compare/v0.11.1...v0.11.2) (2026-10-14)
+
 ## [0.11.1](https://github.com/guiismael/erp/compare/v0.11.0...v0.11.1) (2026-10-13)
 
 ## [0.11.0](https://github.com/guiismael/erp/compare/v0.10.0...v0.11.0) (2026-10-13)
@@ -20,11 +22,4 @@
 ### Features
 
 * create `EventPublisherQueue` for publish events ([6b3027a](https://github.com/guiismael/erp/commit/6b3027a3d755882fef787e8814c701f40a681167))
-
-## [0.8.0](https://github.com/guiismael/erp/compare/v0.7.1...v0.8.0) (2026-10-13)
-
-
-### Features
-
-* publish event on bank created ([468378c](https://github.com/guiismael/erp/commit/468378c525d1dd708c0d11297f3d0d422018185e))
 
