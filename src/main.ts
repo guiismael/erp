@@ -6,7 +6,6 @@ import { UpdateBank } from '@application/usecases/UpdateBank.ts'
 import { PostgreSQLAdapter } from '@external/database/PostgreSQLAdapter.ts'
 import { FastifyAdapter } from '@external/http/FastifyAdapter.ts'
 import { RabbitMQueueAdapter } from '@external/queue/RabbitMQueueAdapter.ts'
-import { BankEventQueueController } from '@infra/controllers/BankEventQueueController.ts'
 import { BankRestController } from '@infra/controllers/BankRestController.ts'
 import { BankDAOSQL } from '@infra/database/DAOs/BankDAOSQL.ts'
 import { BankRepositoryDatabase } from '@infra/database/repositories/BankRepositoryDatabase.ts'
@@ -19,10 +18,6 @@ const databaseConnection = new PostgreSQLAdapter(
 // const databaseConnection = new SQLiteAdapter(
 //   String(process.env.DATABASE_FILENAME),
 // )
-// const queue = new MediatorQueueAdapter()
-const queue = new RabbitMQueueAdapter(String(process.env.RABBIT_URL))
-await queue.connect()
-const eventPublisher = new EventPublisherQueue(queue)
 // const datasource = await typeormDatasourceFactory(
 //   String(process.env.DATABASE_URL_PG),
 // )
@@ -43,6 +38,11 @@ const bankDao = new BankDAOSQL(databaseConnection)
 // const bankRepository = new BankRepositorySQL(databaseConnection)
 const bankRepository = new BankRepositoryDatabase(bankDao)
 
+// const queue = new MediatorQueueAdapter()
+const queue = new RabbitMQueueAdapter(String(process.env.RABBIT_URL))
+await queue.connect()
+const eventPublisher = new EventPublisherQueue(queue)
+
 // const httpRestServer = new ExpressAdapter()
 const httpRestServer = new FastifyAdapter()
 // const httpRestServer = new HonoAdapter()
@@ -60,8 +60,6 @@ new BankRestController(
   removeBank,
 )
 httpRestServer.listen(3000)
-
-new BankEventQueueController(queue)
 
 let shuttingDown = false
 const gracefulShutdown = async () => {
